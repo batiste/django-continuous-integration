@@ -1,5 +1,8 @@
 
 from djintegration.models import Repository, TestReport
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.conf import settings
 
 import os
 import md5
@@ -121,6 +124,16 @@ def make_test_reports():
         if new_test and new_test.fail():
             tests_to_report.append(new_test)
 
-    
-        
-        
+
+    if tests_to_report:
+        emails = getattr(settings, 'DJANGO_INTEGRATION_MAILS', [])
+        title = 'Continuous integration: some tests didn\'t passed'
+        message = render_to_string('djintegration/error_email.html',
+            {'tests':tests_to_report})
+        send_mail(
+            title,
+            message,
+            'noreply@example.com',
+            emails,
+            fail_silently=False
+        )
