@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load djintegration_tags %}
 <html>
 <head>
 <title>Latest test report from djintegration</title>
@@ -60,6 +61,7 @@
         <table>
         <tr><td>Last known commit</td><td>{{ repo.last_commit }}</td></tr>
         <tr><td>Test report commit</td><td>{{ repo.last_test_report.commit }}</td></tr>
+        <tr><td>Last run</td><td>{{ repo.last_test_report.creation_date|date_diff }}</td></tr>
         <tr><td>Status</td><td>{% if repo.last_test_report.fail %}Fail{% else %}Pass{% endif%}</td></tr>
         </table>
         

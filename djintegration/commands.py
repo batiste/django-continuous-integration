@@ -22,9 +22,12 @@ def with_dir(dirname, fun):
         result = fun()
     finally:
         os.chdir(cwd)
-        return result
+    return result
 
 class RepoBackend(object):
+
+    checkout_cmd = None
+    update_cmd = None
 
     def __init__(self, repo, *args, **kwargs):
         self.repo = repo
@@ -41,32 +44,46 @@ class RepoBackend(object):
             return False
         return with_dir('/tmp/', _exist)
 
-class GitBackend(RepoBackend):
-
     def create(self):
         if not self.exist():
-            system('git clone %s %s' % (self.repo.url, self.dirname()))
+            system(self.checkout_cmd % (self.repo.url, self.dirname()))
 
     def update(self):
         def _update():
-            system('git pull')
+            system(self.update_cmd)
             commit = self.last_commit()
-            #if self.repo.last_commit != commit:
-            self.repo.last_commit = commit
-            result = system('python setup.py test')
-            test = TestReport(
-                repository=self.repo,
-                result=result,
-                commit=commit
-            )
-            test.save()
-            self.repo.save()
+            if self.repo.last_commit != commit and len(commit):
+                self.repo.last_commit = commit
+                result = system('python setup.py test')
+                test = TestReport(
+                    repository=self.repo,
+                    result=result,
+                    commit=commit
+                )
+                test.save()
+                self.repo.save()
         with_dir(self.dirname(), _update)
+
+class GitBackend(RepoBackend):
+
+    checkout_cmd = 'git clone %s %s'
+    update_cmd = 'git pull'
 
     def last_commit(self):
         def _commit():
             log = system('git log -n 1')
             return log.split('\n')[0].split(' ')[1]
+        return with_dir(self.dirname(), _commit)
+
+class SvnBackend(RepoBackend):
+
+    checkout_cmd = 'svn checkout %s %s'
+    update_cmd = 'svn up'
+
+    def last_commit(self):
+        def _commit():
+            log = system('svn info')
+            return log.split('\n')[4].split(' ')[1]
         return with_dir(self.dirname(), _commit)
 
 def make_test_reports():
@@ -75,5 +92,10 @@ def make_test_reports():
         if repo.type == 'git':
             print "Making test report for %s" % repo.url
             backend = GitBackend(repo)
+            backend.create()
+            backend.update()
+        if repo.type == 'svn':
+            print "Making test report for %s" % repo.url
+            backend = SvnBackend(repo)
             backend.create()
             backend.update()
