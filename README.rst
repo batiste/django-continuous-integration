@@ -16,28 +16,6 @@ with any python project that have proper tests.
 Django continuous integration currently support Git and Subversion and Mercurial. Creating
 new backend for other tools is very simple.
 
-Installation
-============
-
-You can install ``djintegration`` either via the Python Package Index (PyPI)
-or from source.
-
-To install using ``pip``,::
-
-    $ pip install djintegration
-
-
-To install using ``easy_install``,::
-
-    $ easy_install djintegration
-
-
-If you have downloaded a source tarball you can install it
-by doing the following,::
-
-    $ python setup.py build
-    # python setup.py install # as root
-
 Get started
 ============
 
