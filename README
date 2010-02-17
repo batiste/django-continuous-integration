@@ -39,16 +39,7 @@ by doing the following,::
 Register repositories to be part of the continuous integration
 ==================================================================
 
-Here is how you register an application to be part of the continuous integration::
+Go into the admin and add your repository. To generate a test report execute djintegration.command.make_report::
 
-    DJ_INTEGRATION = [
-        {
-            'repo_url':'svn://http://code.djangoproject.com/svn/django/trunk/',
-            'name': 'Django'
-        },
-        {
-            'repo_url':'git://github.com/pinax/pinax.git',
-            'name': 'Django'
-        }
-    ]
-    
+    $ from djintegration.commands import make_report
+    $ make_report()
