@@ -22,8 +22,12 @@
     }
 
     .repository {
-        width:30%;
+        width:29%;
+        margin-right:2%;
         float:left;
+        -webkit-box-shadow: 6px 6px 3px #eee;
+        -moz-box-shadow: 6px 6px 3px #eee;
+        padding:1%;
     }
 
     .report pre {
@@ -38,6 +42,8 @@
         height:5em;
     }
 
+    td { padding:0.2em 1em; }
+
     pre.fail {
         background-color:#f99;
     }
@@ -49,10 +55,14 @@
 {% for repo in repos %}
 <div class="repository">
         <h2>{{ repo.url }}</h2>
-        <tr><td>Last commit</td><td>{{ repo.last_commit }}</td></tr>
-        <p>Report on commit {{ repo.last_test_report.commit }}</p>
+        <table>
+        <tr><td>Last known commit</td><td>{{ repo.last_commit }}</td></tr>
+        <tr><td>Test report commit</td><td>{{ repo.last_test_report.commit }}</td></tr>
+        <tr><td>Status</td><td>{% if repo.last_test_report.fail %}Fail{% else %}Pass{% endif%}</td></tr>
+        </table>
+        
         <div class="report collapsed">
-            <pre {% if repo.last_test_report.faile %}class="fail"{% endif%}>{{ repo.last_test_report.result }}</pre>
+            <pre {% if repo.last_test_report.fail %}class="fail"{% endif%}>{{ repo.last_test_report.result }}</pre>
         </div>
 </div>
 {% endfor %}

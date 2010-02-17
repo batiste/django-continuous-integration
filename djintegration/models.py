@@ -44,7 +44,8 @@ class TestReport(models.Model):
     result = models.TextField(blank=True)
 
     def fail(self):
-        return result.find('Error') or result.find('Failure')
+        return (self.result.find('Error') != -1 or
+            self.result.find('Failure') != -1)
     
     class Meta:
         verbose_name = _('Test report')

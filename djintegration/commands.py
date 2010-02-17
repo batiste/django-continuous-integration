@@ -69,11 +69,11 @@ class GitBackend(RepoBackend):
             return log.split('\n')[0].split(' ')[1]
         return with_dir(self.dirname(), _commit)
 
-def make_report():
+def make_test_reports():
 
     for repo in Repository.objects.all():
         if repo.type == 'git':
+            print "Making test report for %s" % repo.url
             backend = GitBackend(repo)
             backend.create()
             backend.update()
-            print repo.url

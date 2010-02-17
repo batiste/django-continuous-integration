@@ -35,14 +35,24 @@ by doing the following,::
     $ python setup.py build
     # python setup.py install # as root
 
+Get started
+============
+
+Like all Django application you need to syncdb::
+
+    $ cd testproj/
+    $ python manage.py syncdb
+    $ python manage.py runserver
+
+Then go the administration interface and add your repositories.
 
 Register repositories to be part of the continuous integration
 ==================================================================
 
-Go into the admin and add your repository. To generate a test report execute djintegration.command.make_report::
+To generate a test report execute `djintegration.commands.make_test_reports` by using the manage command::
 
-    $ from djintegration.commands import make_report
-    $ make_report()
+    $ cd testproj/
+    $ python manage.py maketestreports
 
 
 .. image:: http://img708.imageshack.us/img708/7711/testsw.png

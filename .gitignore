@@ -3,6 +3,7 @@
 *~
 *.sqlite
 *.sqlite-journal
+djintegration.db
 settings_local.py
 local_settings.py
 .*.sw[po]
