@@ -7,11 +7,11 @@ djintegration - Continuous integration reports for python
 Introduction
 ============
 
-Django continuous integration is a tool for running and displaying continuous
-integrations tests in you projects.
+Django continuous integration is a tool for running and displaying
+tests for projects.
 
-Although Django is used this tools is intenteded to be used
-by any python project.
+Although Django is used, this tools is intenteded to be used
+with any python project that have proper tests.
 
 Installation
 ============
