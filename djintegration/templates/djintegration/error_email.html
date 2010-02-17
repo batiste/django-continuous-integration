@@ -1,0 +1,13 @@
+Hi,
+
+The latests tests didn't pass:
+
+{% for test in tests %}
+---
+Tests from repository {{ test.repository.url }} run the {{ test.creation_date }} on the commit {{ test.commit }} failed.
+Here are the details:
+
+{{ test.result }}
+
+---
+{% endfor %}
