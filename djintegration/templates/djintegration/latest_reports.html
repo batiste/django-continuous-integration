@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Latest test report from djintegration</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
+<style>
+    h1{
+        font:36px Georgia,"Times New Roman",Times,serif;
+        margin:10px 0;
+    }
+    h2{
+        font:20px Georgia,"Times New Roman",Times,serif;
+    }
+    h1, h2, h3, a {
+        color:#AA2808;
+    }
+    body  {
+        padding:20px;
+        color:#222;
+        font-family:Arial,Helvetica,sans-serif;
+        font-size:13px;
+    }
+
+    .repository {
+        width:30%;
+        float:left;
+    }
+
+    .report pre {
+        border:1px #bbb solid;
+        padding:1em;
+        overflow:hidden;
+        background-color:#84ed10;
+        cursor:pointer;
+    }
+
+    .collapsed pre {
+        height:5em;
+    }
+
+    pre.fail {
+        background-color:#f99;
+    }
+</style>
+</head>
+<body>
+<h1>Latest test reports</h1>
+
+{% for repo in repos %}
+<div class="repository">
+        <h2>{{ repo.url }}</h2>
+        <tr><td>Last commit</td><td>{{ repo.last_commit }}</td></tr>
+        <p>Report on commit {{ repo.last_test_report.commit }}</p>
+        <div class="report collapsed">
+            <pre {% if repo.last_test_report.faile %}class="fail"{% endif%}>{{ repo.last_test_report.result }}</pre>
+        </div>
+</div>
+{% endfor %}
+
+
+<script>
+    $(function(){
+        $('.report').click(function() {
+            $(this).toggleClass('collapsed');
+            return false;
+        });
+    });
+</script>
+
+</body>
+<html>

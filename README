@@ -1,0 +1,54 @@
+============================================================================
+djintegration - Continuous integration application for python
+============================================================================
+
+:Version: 0.0.1
+
+Introduction
+============
+
+Django continuous integration is a tool for running and displaying continuous
+integrations tests in you projects.
+
+Although Django is used for this project this tools can be used by any python
+project.
+
+Installation
+============
+
+You can install ``djintegration`` either via the Python Package Index (PyPI)
+or from source.
+
+To install using ``pip``,::
+
+    $ pip install djintegration
+
+
+To install using ``easy_install``,::
+
+    $ easy_install djintegration
+
+
+If you have downloaded a source tarball you can install it
+by doing the following,::
+
+    $ python setup.py build
+    # python setup.py install # as root
+
+
+Register repositories to be part of the continuous integration
+==================================================================
+
+Here is how you register an application to be part of the continuous integration::
+
+    DJ_INTEGRATION = [
+        {
+            'repo_url':'svn://http://code.djangoproject.com/svn/django/trunk/',
+            'name': 'Django'
+        },
+        {
+            'repo_url':'git://github.com/pinax/pinax.git',
+            'name': 'Django'
+        }
+    ]
+    
