@@ -43,3 +43,6 @@ Go into the admin and add your repository. To generate a test report execute dji
 
     $ from djintegration.commands import make_report
     $ make_report()
+
+
+.. image:: http://img708.imageshack.us/img708/7711/testsw.png
