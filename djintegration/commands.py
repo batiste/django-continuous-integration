@@ -52,7 +52,7 @@ class RepoBackend(object):
         def _update():
             system(self.update_cmd)
             commit = self.last_commit()
-            if self.repo.last_commit != commit and len(commit):
+            if self.repo.last_commit != commit or len(commit) == 0:
                 self.repo.last_commit = commit
                 result = system('python setup.py test')
                 test = TestReport(
@@ -63,6 +63,9 @@ class RepoBackend(object):
                 test.save()
                 self.repo.save()
         with_dir(self.dirname(), _update)
+
+    def last_commit(self):
+        raise NotImplemented
 
 class GitBackend(RepoBackend):
 
