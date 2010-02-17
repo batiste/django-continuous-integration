@@ -8,6 +8,7 @@ from datetime import datetime
 REPOS = (
     ('git', 'Git'),
     ('svn', 'Subversion'),
+    ('hg', 'Mercurial'),
 )
 
 

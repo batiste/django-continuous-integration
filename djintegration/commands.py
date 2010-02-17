@@ -62,7 +62,10 @@ class RepoBackend(object):
                 )
                 test.save()
                 self.repo.save()
-        with_dir(self.dirname(), _update)
+                return test
+            return None
+        return with_dir(self.dirname(), _update)
+            
 
     def last_commit(self):
         raise NotImplemented
@@ -89,16 +92,35 @@ class SvnBackend(RepoBackend):
             return log.split('\n')[4].split(' ')[1]
         return with_dir(self.dirname(), _commit)
 
+class MercurialBackend(RepoBackend):
+
+    checkout_cmd = 'hg clone %s %s'
+    update_cmd = 'hg pull'
+
+    def last_commit(self):
+        def _commit():
+            log = system('hg log --limit 1')
+            return log.split('\n')[0].split(' ')[-1]
+        return with_dir(self.dirname(), _commit)
+
 def make_test_reports():
 
+    tests_to_report = []
+
     for repo in Repository.objects.all():
+        print "Making test report for %s" % repo.url
         if repo.type == 'git':
-            print "Making test report for %s" % repo.url
             backend = GitBackend(repo)
-            backend.create()
-            backend.update()
-        if repo.type == 'svn':
-            print "Making test report for %s" % repo.url
+        elif repo.type == 'svn':
             backend = SvnBackend(repo)
-            backend.create()
-            backend.update()
+        elif repo.type == 'hg':
+            backend = MercurialBackend(repo)
+
+        backend.create()
+        new_test = backend.update()
+        if new_test and new_test.fail():
+            tests_to_report.append(new_test)
+
+    
+        
+        

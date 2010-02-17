@@ -13,6 +13,9 @@ tests for projects.
 Although Django is used, this tools is intenteded to be used
 with any python project that have proper tests.
 
+Django continuous integration currently support Git and Subversion and Mercurial. Creating
+new backend for other tools is very simple.
+
 Installation
 ============
 
