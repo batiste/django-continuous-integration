@@ -1,0 +1,7 @@
+
+CHANGELOG
+=============
+
+Added a column for being language agnostic::
+
+    ALTER TABLE "djintegration_repository" ADD COLUMN "test_command" text;
