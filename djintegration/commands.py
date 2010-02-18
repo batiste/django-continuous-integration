@@ -10,6 +10,9 @@ import sys
 import shlex
 from subprocess import Popen, PIPE, STDOUT
 
+REPOS_DIR = getattr(settings, 'DJ_INTEGRATION_DIRECTORY', '/tmp/')
+EMAILS = getattr(settings, 'DJANGO_INTEGRATION_MAILS', [])
+
 def system(command_line):
     command_line = str(command_line)
     args = shlex.split(command_line)
@@ -38,14 +41,14 @@ class RepoBackend(object):
     def dirname(self):
         m = md5.new()
         m.update(self.repo.url)
-        return '/tmp/' + m.hexdigest()
+        return REPOS_DIR + m.hexdigest()
 
     def exist(self):
         def _exist():
             if os.path.exists(self.dirname()):
                 return True
             return False
-        return with_dir('/tmp/', _exist)
+        return with_dir(REPOS_DIR, _exist)
 
     def create(self):
         if not self.exist():
@@ -57,7 +60,8 @@ class RepoBackend(object):
             commit = self.last_commit()
             if self.repo.last_commit != commit or len(commit) == 0:
                 self.repo.last_commit = commit
-                result = system('python setup.py test')
+                test_command = self.repo.test_command or 'python setup.py test'
+                result = system(test_command)
                 test = TestReport(
                     repository=self.repo,
                     result=result,
@@ -126,7 +130,6 @@ def make_test_reports():
 
 
     if tests_to_report:
-        emails = getattr(settings, 'DJANGO_INTEGRATION_MAILS', [])
         title = 'Continuous integration: some tests didn\'t passed'
         message = render_to_string('djintegration/error_email.html',
             {'tests':tests_to_report})
@@ -134,6 +137,6 @@ def make_test_reports():
             title,
             message,
             'noreply@example.com',
-            emails,
+            EMAILS,
             fail_silently=False
         )

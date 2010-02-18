@@ -22,9 +22,12 @@ class Repository(models.Model):
     creation_date = models.DateTimeField(_('creation date'), editable=False,
         default=datetime.now)
 
+    test_command = models.TextField(_('Test command'),
+        blank=True,
+        help_text='Default: "python setup.py test"')
+
     def last_test_report(self):
         return TestReport.objects.filter(repository=self).latest('creation_date')
-        
 
     class Meta:
         get_latest_by = 'creation_date'
