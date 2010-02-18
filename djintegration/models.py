@@ -49,8 +49,17 @@ class TestReport(models.Model):
     author = models.CharField(_('Author'), max_length=100, blank=True)
 
     def fail(self):
-        return (self.result.find('Error') != -1 or
-            self.result.find('Failure') != -1)
+        result = self.result.lower()
+        def contains(text):
+            return result.find(text) != -1
+
+        if contains('0 error') and contains('0 failure'):
+            return False
+
+        if contains('error') or contains('failure'):
+            return True
+
+        return False
     
     class Meta:
         verbose_name = _('Test report')
