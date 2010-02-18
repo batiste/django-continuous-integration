@@ -20,8 +20,7 @@ def make_test_reports():
         elif repo.type == 'hg':
             backend = MercurialBackend(repo)
 
-        backend.create()
-        new_test = backend.update()
+        new_test = backend.make_report()
         if new_test and new_test.fail():
             tests_to_report.append(new_test)
 

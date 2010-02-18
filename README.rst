@@ -29,7 +29,7 @@ How does it work
 =================
 
 You need to create a repository within the admin
-and a a test command (the default being "python setup.py test").
+and add a test command (the default being `"python setup.py test"`).
 
 Then you can generate a test report for all your repositories
 using the `djintegration.commands.make_test_reports` commands
@@ -39,7 +39,8 @@ or by using the manage command::
     $ python manage.py maketestreports
 
 This command will checkout your repositories in "/tmp/" and try to
-execute the command you provided. The result will be stored in test report.
+execute the command you provided. The result will be stored in the
+test report model.
 
 The success or failure of the test is determined by the presence
 of certain keywords within the the test result.

@@ -40,7 +40,7 @@ class RepoBackend(object):
         m.update(self.repo.url)
         from django.conf import settings
         rdir = getattr(settings, 'DJ_INTEGRATION_DIRECTORY', '/tmp/')
-        return rdir + m.hexdigest()
+        return rdir + m.hexdigest() + '/'
 
     def exist(self):
         def _exist():
@@ -51,46 +51,71 @@ class RepoBackend(object):
         rdir = getattr(settings, 'DJ_INTEGRATION_DIRECTORY', '/tmp/')
         return with_dir(rdir, _exist)
 
-    def create(self):
-        if not self.exist():
-            system(self.checkout_cmd % (self.repo.url, self.dirname()))
+    def command_virtualenv(self, cmd):
+        def _command():
+            return system(cmd)
+        return with_dir(self.dirname(), _command)
 
-    def update(self):
-        def _update():
-            system(self.update_cmd)
-            commit = self.last_commit()
-            if self.repo.last_commit != commit or len(commit) == 0:
-                self.repo.last_commit = commit
-                test_command = self.repo.test_command or 'python setup.py test'
-                result = system(test_command)
-                author = self.last_commit_author()
-                # this is only to keep unit tests working without
-                # having to setup the django settings module
-                from djintegration.models import TestReport
-                test = TestReport(
-                    repository=self.repo,
-                    result=result,
-                    commit=commit,
-                    author=author
-                )
-                test.save()
-                self.repo.save()
-                return test
-            return None
-        return with_dir(self.dirname(), _update)
+    def command_app(self, cmd):
+        def _command():
+            return system(cmd)
+        return with_dir(self.dirname() + 'tested_app/', _command)
+
+    def activate(self):
+        activate_this = self.dirname() + 'bin/activate_this.py'
+        execfile(activate_this, dict(__file__=activate_this))
+
+    def setup_env(self):
+        system('virtualenv --no-site-packages %s' % self.dirname())
+        self.activate()
+        self.command_virtualenv(self.checkout_cmd % (self.repo.url, 'tested_app'))
+
+    def install_dependencies(self):
+        self.command_app('python setup.py install')
+
+    def teardown_env(self):
+        system('rm -Rf %s' % self.dirname())
+
+    def test_command(self):
+        return self.repo.test_command or 'python setup.py test'
+
+    def make_report(self):
+        
+        self.setup_env()
+        commit = self.last_commit()
+        
+        if self.repo.last_commit != commit or len(commit) == 0:
+            self.repo.last_commit = commit
+
+            self.install_dependencies()
+            
+            result = self.command_app(self.test_command())
+            author = self.last_commit_author()
+            
+            self.teardown_env()
+
+            # this is only to keep unit tests working without
+            # having to setup the django settings module
+            from djintegration.models import TestReport
+            test = TestReport(
+                repository=self.repo,
+                result=result,
+                commit=commit,
+                author=author
+            )
+            test.save()
+            self.repo.save()
+            return test
+        return None
 
 
     def last_commit(self):
-        def _commit():
-            log = system(self.log_cmd)
-            return self.get_commit(log)
-        return with_dir(self.dirname(), _commit)
+        log = self.command_app(self.log_cmd)
+        return self.get_commit(log)
 
     def last_commit_author(self):
-        def _commit():
-            log = system(self.log_cmd)
-            return self.get_author(log)
-        return with_dir(self.dirname(), _commit)
+        log = self.command_app(self.log_cmd)
+        return self.get_author(log)
 
 class GitBackend(RepoBackend):
 
