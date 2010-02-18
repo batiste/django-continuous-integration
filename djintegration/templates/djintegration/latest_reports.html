@@ -2,7 +2,7 @@
 {% load djintegration_tags %}
 <html>
 <head>
-<title>Latest test report from djintegration</title>
+<title>Latest test reports from djintegration</title>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
 <style>
     h1{
@@ -13,7 +13,7 @@
         font:18px Georgia,"Times New Roman",Times,serif;
     }
     h1, h2, h3, a {
-        color:#AA2808;
+        color:#bb3010;
     }
     body  {
         padding:20px;
@@ -27,9 +27,10 @@
         min-width:400px;
         margin-right:2%;
         margin-bottom:2%;
+        border:1px #e5f6e5 solid;
         float:left;
-        -webkit-box-shadow: 6px 6px 3px #eee;
-        -moz-box-shadow: 6px 6px 3px #eee;
+        -webkit-box-shadow: 5px 5px 3px #eee;
+        -moz-box-shadow: 5px 5px 3px #eee;
         padding:1%;
     }
 
@@ -53,7 +54,7 @@
 </style>
 </head>
 <body>
-<h1>Latest test reports</h1>
+<h1>Fresh test reports</h1>
 
 {% for repo in repos %}
 <div class="repository">

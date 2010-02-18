@@ -8,7 +8,7 @@ Introduction
 Django continuous integration is a language agnostic tool for running and displaying
 tests.
 
-Although python and Django are used, this tools is intenteded to be used
+Although python and Django are used, this tools is can be used
 with any project that have proper command line tests.
 
 Django continuous integration currently support Git, Subversion and Mercurial. Creating
