@@ -63,10 +63,15 @@ class RepoBackend(object):
                 self.repo.last_commit = commit
                 test_command = self.repo.test_command or 'python setup.py test'
                 result = system(test_command)
+                author = self.last_commit_author()
+                # this is only to keep unit tests working without
+                # having to setup the django settings module
+                from djintegration.models import TestReport
                 test = TestReport(
                     repository=self.repo,
                     result=result,
-                    commit=commit
+                    commit=commit,
+                    author=author
                 )
                 test.save()
                 self.repo.save()

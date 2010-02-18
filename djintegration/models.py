@@ -46,6 +46,7 @@ class TestReport(models.Model):
 
     commit = models.CharField(_('Commit'), max_length=100, blank=False)
     result = models.TextField(blank=True)
+    author = models.CharField(_('Author'), max_length=100, blank=True)
 
     def fail(self):
         return (self.result.find('Error') != -1 or

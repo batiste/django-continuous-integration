@@ -2,6 +2,10 @@
 CHANGELOG
 =============
 
+Added a column for commit author::
+
+    ALTER TABLE "djintegration_testreport" ADD COLUMN "author" varchar(100) NOT NULL DEFAULT "";
+
 Added a column for being language agnostic::
 
     ALTER TABLE "djintegration_repository" ADD COLUMN "test_command" text;
