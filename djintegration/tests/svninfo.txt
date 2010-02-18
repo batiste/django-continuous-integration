@@ -1,0 +1,10 @@
+Path: .
+URL: http://django-filebrowser.googlecode.com/svn/branches/filebrowser_3
+Repository Root: http://django-filebrowser.googlecode.com/svn
+Repository UUID: b1eb0509-c838-0410-b15c-e5ce2c1b85ca
+Revision: 466
+Node Kind: directory
+Schedule: normal
+Last Changed Author: sehmaschine
+Last Changed Rev: 466
+Last Changed Date: 2009-10-29 17:15:59 +0100 (Thu, 29 Oct 2009)

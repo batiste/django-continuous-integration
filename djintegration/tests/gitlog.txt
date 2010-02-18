@@ -1,0 +1,5 @@
+commit 0873bdde7f216304800fe1a22325cb60ee492f54
+Author: Batiste Bieler <batisteb@opera.com>
+Date:   Thu Feb 18 10:15:07 2010 +0100
+
+    Document the database change

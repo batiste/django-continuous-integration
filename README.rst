@@ -22,6 +22,9 @@ of the applications you want to test. You have to manually make sure
 that the application you are testing has the proper environnement to run
 the tests.
 
+This package is not a client/server architecture yet. All the tests are run
+on the server.
+
 Get started
 ============
 
