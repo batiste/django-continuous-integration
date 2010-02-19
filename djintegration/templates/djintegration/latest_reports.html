@@ -48,7 +48,7 @@
 
     td { padding:0.2em 0.5em; }
 
-    pre.fail {
+    .fail pre {
         background-color:#f99;
     }
 </style>
@@ -57,18 +57,17 @@
 <h1>Fresh test reports</h1>
 
 {% for repo in repos %}
-<div class="repository">
+<div class="repository {% if repo.fail %}fail{% else %}pass{% endif%}">
         <h2>{{ repo.url }}</h2>
         <table>
         <!--<tr><td>Last known commit</td><td>{{ repo.last_commit }}</td></tr>-->
         <tr><td>Commit</td><td>{{ repo.last_test_report.commit }}</td></tr>
         <tr><td>Last run</td><td>{{ repo.last_test_report.creation_date|date_diff }}</td></tr>
         <tr><td>Author</td><td>{{ repo.last_test_report.author }}</td></tr>
-        <tr><td>Status</td><td>{% if repo.last_test_report.fail %}Fail{% else %}Pass{% endif%}</td></tr>
         </table>
         
         <div class="report collapsed">
-            <pre {% if repo.last_test_report.fail %}class="fail"{% endif%}>{{ repo.last_test_report.result }}</pre>
+            <pre>{{ repo.last_test_report.result }}</pre>
         </div>
 </div>
 {% endfor %}

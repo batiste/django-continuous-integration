@@ -34,6 +34,9 @@ class Repository(models.Model):
 
     state = models.CharField(_('State'), choices=STATE, max_length=10)
 
+    def fail(self):
+        return self.state == 'fail'
+
     def last_test_report(self):
         return TestReport.objects.filter(repository=self).latest('creation_date')
 

@@ -5,7 +5,8 @@ from django.template import RequestContext
 
 def lastest_reports(request):
 
-    repos = Repository.objects.all()
+    repos = list(Repository.objects.filter(state='fail')) + \
+        list(Repository.objects.filter(state='pass'))
     
     return render_to_response('djintegration/latest_reports.html',
         RequestContext(request, locals()))
