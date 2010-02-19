@@ -71,7 +71,7 @@ class RepoBackend(object):
         self.command_virtualenv(self.checkout_cmd % (self.repo.url, 'tested_app'))
 
     def install_dependencies(self):
-        self.command_app('python setup.py install')
+        return self.command_app('python setup.py install')
 
     def teardown_env(self):
         system('rm -Rf %s' % self.dirname())
@@ -88,7 +88,7 @@ class RepoBackend(object):
         if self.repo.last_commit != commit or len(commit) == 0:
             self.repo.last_commit = commit
 
-            self.install_dependencies()
+            install = self.install_dependencies()
             
             result = self.command_app(self.test_command())
             author = self.last_commit_author()
@@ -98,6 +98,7 @@ class RepoBackend(object):
             from djintegration.models import TestReport
             new_test = TestReport(
                 repository=self.repo,
+                install=install,
                 result=result,
                 commit=commit,
                 author=author

@@ -12,6 +12,9 @@
     h2{
         font:18px Georgia,"Times New Roman",Times,serif;
     }
+    h3{
+        font:15px Georgia,"Times New Roman",Times,serif;
+    }
     h1, h2, h3, a {
         color:#bb3010;
     }
@@ -36,14 +39,14 @@
 
     .report pre {
         border:1px #bbb solid;
-        padding:1em;
+        padding:0.5em;
         overflow:hidden;
         background-color:#84ed10;
         cursor:pointer;
     }
 
     .collapsed pre {
-        height:4em;
+        max-height:2em;
     }
 
     td { padding:0.2em 0.5em; }
@@ -65,7 +68,14 @@
         <tr><td>Last run</td><td>{{ repo.last_test_report.creation_date|date_diff }}</td></tr>
         <tr><td>Author</td><td>{{ repo.last_test_report.author }}</td></tr>
         </table>
-        
+
+        {% if repo.fail %}
+        <h3>Install output</h3>
+        <div class="report collapsed">
+            <pre>{{ repo.last_test_report.install }}</pre>
+        </div>
+        {% endif %}
+        <h3>Test output</h3>
         <div class="report collapsed">
             <pre>{{ repo.last_test_report.result }}</pre>
         </div>

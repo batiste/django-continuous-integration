@@ -5,22 +5,20 @@ djintegration - Continuous integration reports for python
 Introduction
 ==============
 
-Django continuous integration is a language agnostic tool for running and displaying
-tests.
+Django continuous integration is a tool for running and displaying
+tests for the python language.
 
 Although python and Django are used, this tools is can be used
-with any project that have proper command line tests.
+with any project that have proper tests.
 
 Django continuous integration currently support Git, Subversion and Mercurial. Creating
 new backend for other source control tools is very simple.
 
+This package use virtualenv to setup your application and install
+the necesseray dependencies of your application.
+
 What it doesn't do (yet)
 =========================
-
-This package has no support for virtualenv or installing the dependencies
-of the applications you want to test. You have to manually make sure
-that the application you are testing has the proper environnement to run
-the tests.
 
 This package is not a client/server architecture yet. All the tests are run
 on the server.
