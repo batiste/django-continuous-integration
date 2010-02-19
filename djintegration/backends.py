@@ -83,6 +83,7 @@ class RepoBackend(object):
         
         self.setup_env()
         commit = self.last_commit()
+        new_test = none
         
         if self.repo.last_commit != commit or len(commit) == 0:
             self.repo.last_commit = commit
@@ -91,13 +92,11 @@ class RepoBackend(object):
             
             result = self.command_app(self.test_command())
             author = self.last_commit_author()
-            
-            self.teardown_env()
 
             # this is only to keep unit tests working without
             # having to setup the django settings module
             from djintegration.models import TestReport
-            test = TestReport(
+            new_test = TestReport(
                 repository=self.repo,
                 result=result,
                 commit=commit,
@@ -105,8 +104,9 @@ class RepoBackend(object):
             )
             test.save()
             self.repo.save()
-            return test
-        return None
+        
+        self.teardown_env()
+        return new_test
 
 
     def last_commit(self):
