@@ -103,6 +103,7 @@ class RepoBackend(object):
                 author=author
             )
             new_test.save()
+            sefl.repo.state = 'fail' if new_test.fail() else 'pass'
             self.repo.save()
         
         self.teardown_env()

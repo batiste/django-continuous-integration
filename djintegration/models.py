@@ -12,6 +12,12 @@ REPOS = (
 )
 
 
+STATE = (
+    ('fail', 'Fail'),
+    ('pass', 'Pass'),
+)
+
+
 class Repository(models.Model):
     """Represent a repository"""
 
@@ -25,6 +31,8 @@ class Repository(models.Model):
     test_command = models.TextField(_('Test command'),
         blank=True,
         help_text='Default: "python setup.py test"')
+
+    state = models.CharField(_('State'), choices=STATE, max_length=10)
 
     def last_test_report(self):
         return TestReport.objects.filter(repository=self).latest('creation_date')

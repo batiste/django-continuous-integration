@@ -2,6 +2,11 @@
 CHANGELOG
 =============
 
+
+Added a column for caching the state of the repo::
+
+    ALTER TABLE djintegration_repository ADD COLUMN state VARCHAR(10) DEFAULT "pass";
+
 Added a column for commit author::
 
     ALTER TABLE "djintegration_testreport" ADD COLUMN "author" varchar(100) NOT NULL DEFAULT "";
