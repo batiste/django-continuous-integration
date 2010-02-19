@@ -102,7 +102,7 @@ class RepoBackend(object):
                 commit=commit,
                 author=author
             )
-            test.save()
+            new_test.save()
             self.repo.save()
         
         self.teardown_env()
