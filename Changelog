@@ -2,6 +2,9 @@
 CHANGELOG
 =============
 
+Added a column the install outpu::
+
+    ALTER TABLE djintegration_testreport ADD COLUMN install text default "";
 
 Added a column for caching the state of the repo::
 
