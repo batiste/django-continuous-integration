@@ -83,7 +83,7 @@ class RepoBackend(object):
         
         self.setup_env()
         commit = self.last_commit()
-        new_test = none
+        new_test = None
         
         if self.repo.last_commit != commit or len(commit) == 0:
             self.repo.last_commit = commit
