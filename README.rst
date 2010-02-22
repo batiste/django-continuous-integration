@@ -6,28 +6,23 @@ Introduction
 ==============
 
 Django continuous integration is a tool for running and displaying
-tests for the python language.
+tests for the python language. Although python and Django are used,
+this tools is meant to be used with any python project that has tests.
 
-Although python and Django are used, this tools is can be used
-with any project that have proper tests.
+Django continuous integration currently support `Git`, `Subversion` and `Mercurial`.
 
-Django continuous integration currently support Git, Subversion and Mercurial. Creating
-new backend for other source control tools is very simple.
-
-This package use virtualenv to setup your application and install
-the necesseray dependencies of your application.
-
-What it doesn't do (yet)
-=========================
-
-This package is not a client/server architecture yet. All the tests are run
-on the server.
 
 How does it work
 =================
 
-You need to create a repository within the admin
+You need to create a repository within the admin by providing a repository URL
 and add a test command (the default being `"python setup.py test"`).
+
+For every test this software create a virtual python environnement (virtualenv)
+and try to setup your python application by checking out your code and installing
+the necesseray dependencies. It's nececessary that your package list all
+the needed dependencies in `setup.py`. It's possible that you will have to
+install some distribution dependencies by hand (like the developement headers for lxml).
 
 Then you can generate a test report for all your repositories
 using the `djintegration.commands.make_test_reports` commands
@@ -43,6 +38,12 @@ test report model.
 The success or failure of the test is determined by the presence
 of certain keywords within the the test result.
 
+
+What it doesn't do (yet)
+=========================
+
+This package is not a client/server architecture yet. All the tests are run
+on the server.
 
 Get started
 =============
