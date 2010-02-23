@@ -10,7 +10,7 @@ def system(command_line):
     args = shlex.split(command_line)
     p = Popen(args, stdout=PIPE, stderr=STDOUT)
     output, errors = p.communicate()
-    return output
+    return output, p.returncode
 
 def with_dir(dirname, fun):
     cwd = os.getcwd()
@@ -88,9 +88,9 @@ class RepoBackend(object):
         if self.repo.last_commit != commit or len(commit) == 0:
             self.repo.last_commit = commit
 
-            install = self.install_dependencies()
+            install_result, returncode1 = self.install_dependencies()
             
-            result = self.command_app(self.test_command())
+            test_result, returncode2 = self.command_app(self.test_command())
             author = self.last_commit_author()
 
             # this is only to keep unit tests working without
@@ -98,13 +98,13 @@ class RepoBackend(object):
             from djintegration.models import TestReport
             new_test = TestReport(
                 repository=self.repo,
-                install=install,
-                result=result,
+                install=install_result,
+                result=test_result,
                 commit=commit,
                 author=author
             )
             new_test.save()
-            self.repo.state = 'fail' if new_test.fail() else 'pass'
+            self.repo.state = 'pass' if returncode2 == 0 else 'fail'
             self.repo.save()
         
         self.teardown_env()
@@ -112,11 +112,11 @@ class RepoBackend(object):
 
 
     def last_commit(self):
-        log = self.command_app(self.log_cmd)
+        log, returncode = self.command_app(self.log_cmd)
         return self.get_commit(log)
 
     def last_commit_author(self):
-        log = self.command_app(self.log_cmd)
+        log, returncode = self.command_app(self.log_cmd)
         return self.get_author(log)
 
 class GitBackend(RepoBackend):
