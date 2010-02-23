@@ -39,7 +39,7 @@ def make_test_reports():
         else:
             emails = EMAILS
 
-        title = '%s latest tests didn\'t passed' % repo.url
+        title = TITLE % repo.url
         message = render_to_string('djintegration/error_email.html',
             {'test':test})
 
