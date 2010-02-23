@@ -4,16 +4,16 @@ Hi,
 Tests on repository {{ test.repository.url }}
 run {{ test.creation_date|date_diff }}
 on the commit {{ test.commit }} didn't passed.
-Latest commiter was {{ test.author }}.
+Latest commiter was {{ test.author|safe }}.
 
 Tests results output
-({{ test.repository.get_test_command }})
+({{ test.repository.get_test_command|safe }})
 =========================
 
-{{ test.result }}
+{{ test.result|safe }}
 
 
 Tests installation output
 ==========================
 
-{{ test.install }}
+{{ test.install|safe }}
