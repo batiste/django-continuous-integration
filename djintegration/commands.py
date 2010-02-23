@@ -34,7 +34,6 @@ def make_test_reports():
         else:
             emails = EMAILS
 
-        print emails
         title = '%s latest tests didn\'t passed' % repo.url
         message = render_to_string('djintegration/error_email.html',
             {'test':test})
