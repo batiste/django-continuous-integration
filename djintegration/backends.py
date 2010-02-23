@@ -76,9 +76,6 @@ class RepoBackend(object):
     def teardown_env(self):
         system('rm -Rf %s' % self.dirname())
 
-    def test_command(self):
-        return self.repo.test_command or 'python setup.py test'
-
     def make_report(self):
         
         self.setup_env()
@@ -90,7 +87,8 @@ class RepoBackend(object):
 
             install_result, returncode1 = self.install_dependencies()
             
-            test_result, returncode2 = self.command_app(self.test_command())
+            test_result, returncode2 = self.command_app(
+                self.repo.get_test_command())
             author = self.last_commit_author()
 
             result_state = 'pass' if returncode2 == 0 else 'fail'

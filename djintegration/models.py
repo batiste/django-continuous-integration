@@ -44,6 +44,9 @@ class Repository(models.Model):
     def last_test_report(self):
         return TestReport.objects.filter(repository=self).latest('creation_date')
 
+    def get_test_command(self):
+        return self.test_command or 'python setup.py test'
+
     class Meta:
         get_latest_by = 'creation_date'
         verbose_name = _('Repository')

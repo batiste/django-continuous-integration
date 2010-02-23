@@ -1,10 +1,13 @@
+{% load djintegration_tags %}
 Hi,
 
-Tests from repository {{ test.repository.url }} run the {{ test.creation_date }} on the commit {{ test.commit }} failed.
-Commiter was {{ test.author }}.
+Tests on repository {{ test.repository.url }}
+run {{ test.creation_date|date_diff }}
+on the commit {{ test.commit }} didn't passed.
+Latest commiter was {{ test.author }}.
 
 Tests results output
-({{ test.repository.test_command }})
+({{ test.repository.get_test_command }})
 =========================
 
 {{ test.result }}
