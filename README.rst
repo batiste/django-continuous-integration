@@ -55,7 +55,3 @@ Like all Django application you need to syncdb::
     $ python manage.py runserver
 
 Then go the administration interface and add your repositories.
-
-View of the frontend:
-
-.. image:: http://img215.imageshack.us/img215/5556/djangocontinuous.png
