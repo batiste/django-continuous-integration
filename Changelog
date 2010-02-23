@@ -2,7 +2,15 @@
 CHANGELOG
 =============
 
-Added a column the install outpu::
+Added a column for overrding email notifications::
+
+    ALTER TABLE djintegration_repository ADD COLUMN emails text NOT NULL default "";
+
+Added a column for state on the test report::
+
+    ALTER TABLE djintegration_testreport ADD COLUMN state varchar(10) NOT NULL DEFAULT "pass";
+
+Added a column the install output::
 
     ALTER TABLE djintegration_testreport ADD COLUMN install text default "";
 

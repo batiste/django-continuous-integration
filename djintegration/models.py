@@ -34,6 +34,10 @@ class Repository(models.Model):
 
     state = models.CharField(_('State'), choices=STATE, max_length=10)
 
+    emails = models.TextField(_('Notification emails'),
+        blank=True,
+        help_text='Default: settings.DJANGO_INTEGRATION_MAILS, comma separated.')
+
     def fail(self):
         return self.state == 'fail'
 

@@ -25,14 +25,24 @@ def make_test_reports():
             tests_to_report.append(new_test)
 
 
-    if tests_to_report:
-        title = 'Continuous integration: some tests didn\'t passed'
+    for test in tests_to_report:
+        
+        repo = test.repository
+        
+        if repo.emails:
+            emails = repo.emails.split(',')
+        else:
+            emails = EMAILS
+
+        print emails
+        title = '%s latest tests didn\'t passed' % repo.url
         message = render_to_string('djintegration/error_email.html',
-            {'tests':tests_to_report})
+            {'test':test})
+
         send_mail(
             title,
             message,
             'noreply@example.com',
-            EMAILS,
+            emails,
             fail_silently=False
         )
