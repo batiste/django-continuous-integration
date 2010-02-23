@@ -8,6 +8,8 @@ from django.conf import settings
 EMAILS = getattr(settings, 'DJANGO_INTEGRATION_MAILS', [])
 FROM = getattr(settings, 'DJANGO_INTEGRATION_FROM_MAIL',
     'django-continuous-integration@noreply.com')
+TITLE = getattr(settings, 'DJANGO_INTEGRATION_MAIL_TITLE',
+    '%s latest tests didn\'t passed')
 
 
 def make_test_reports():
