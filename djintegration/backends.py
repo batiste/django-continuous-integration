@@ -93,7 +93,8 @@ class RepoBackend(object):
             test_result, returncode2 = self.command_app(self.test_command())
             author = self.last_commit_author()
 
-            # this is only to keep unit tests working without
+            result_state = 'pass' if returncode2 == 0 else 'fail'
+            # this is only to keep unit tests possible without
             # having to setup the django settings module
             from djintegration.models import TestReport
             new_test = TestReport(
@@ -101,10 +102,11 @@ class RepoBackend(object):
                 install=install_result,
                 result=test_result,
                 commit=commit,
-                author=author
+                author=author,
+                state=result_state,
             )
             new_test.save()
-            self.repo.state = 'pass' if returncode2 == 0 else 'fail'
+            self.repo.state = result_state
             self.repo.save()
         
         self.teardown_env()

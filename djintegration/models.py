@@ -60,6 +60,8 @@ class TestReport(models.Model):
     install = models.TextField(blank=True)
     author = models.CharField(_('Author'), max_length=100, blank=True)
 
+    state = models.CharField(_('State'), choices=STATE, max_length=10)
+
     def fail(self):
         result = self.result.lower()
         def contains(text):
