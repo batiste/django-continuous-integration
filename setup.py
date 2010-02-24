@@ -6,6 +6,11 @@ from setuptools import setup, find_packages
 #from distribute import setup, find_packages
 import djintegration
 
+import os
+templates_dirs = []
+for directory in os.walk('djintegration/templates'):
+    templates_dirs.append(directory[0][6:]+'/*.*')
+
 setup(
     name='djintegration',
     version=djintegration.__version__,
@@ -15,7 +20,7 @@ setup(
     url=djintegration.__homepage__,
     platforms=["any"],
     packages=find_packages(exclude=['testproj', 'testproj.*']),
-    data_files=data_files,
+    package_data={'djintegration': templates_dirs},
     zip_safe=False,
     test_suite="nose.collector",
     install_requires=(
