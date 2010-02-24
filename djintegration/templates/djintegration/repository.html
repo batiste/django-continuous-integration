@@ -1,0 +1,42 @@
+{% extends "djintegration/base.html" %}
+{% load djintegration_tags %}
+{% block body %}
+<a href="{% url latest-reports %}" style="font-size:1.5em">&laquo; Back to fresh reports.</a>
+<h1>Latest tests for <span>{{ repo.url }}</span></h1>
+
+{% for test in tests %}
+<div class="test {% if test.fail %}fail{% else %}pass{% endif%}">
+        <table>
+        <!--<tr><td>Last known commit</td><td>{{ repo.last_commit }}</td></tr>-->
+        <tr><td>Commit</td><td>{{ test.commit }}</td></tr>
+        <tr><td>Last run</td><td>{{ test.creation_date|date_diff }}</td></tr>
+        <tr><td>Author</td><td>{{ test.author }}</td></tr>
+        </table>
+
+        {% if test.fail %}
+        <h3>Install output</h3>
+        <div class="report collapsed">
+            <pre>{{ test.install }}</pre>
+        </div>
+        
+        <h3>Test output</h3>
+        <div class="report collapsed">
+            <pre>{{ test.result }}</pre>
+        </div>
+        {% endif %}
+</div>
+{% endfor %}
+
+
+<script>
+    $(function(){
+        $('.report').click(function() {
+            $(this).toggleClass('collapsed');
+            return false;
+        });
+    });
+</script>
+
+</body>
+<html>
+{% endblock %}
