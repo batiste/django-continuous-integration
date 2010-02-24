@@ -76,6 +76,14 @@ What it doesn't do (yet)
 This package is not a client/server architecture yet. All the tests are run
 on the server.
 
+Make it run automaticaly
+==========================
+
+As you could have multiple repositories in different locations, I think polling is a
+realisitic approch. For that ou could use a cron job to make it run every 10 minutes::
+
+    */10 *   *   *   *    cd /project/directory/;python manage.py maketestreports >> reports.log
+
 Get started
 =============
 
