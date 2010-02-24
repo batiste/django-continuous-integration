@@ -7,3 +7,7 @@ include TODO
 recursive-include docs *
 recursive-include djintegration *
 recursive-include tests *
+recursive-include djintegration/templates *
+global-include *.html
+global-exclude *.pyc
+prune testproj
