@@ -35,8 +35,39 @@ This command will checkout your repositories in "/tmp/" and try to
 execute the command you provided. The result will be stored in the
 test report model.
 
-The success or failure of the test is determined by the presence
-of certain keywords within the the test result.
+The success or failure of the test is determined by the return code
+of the test command.
+
+Settings
+===========
+
+DJANGO_INTEGRATION_MAILS
+---------------------------
+
+Default value: []
+
+A list of emails where the failing tests are sent.
+
+DJANGO_INTEGRATION_FROM_MAIL
+------------------------------
+
+Default value: "django-continuous-integration@noreply.com"
+
+"From" field for report emails.
+
+DJANGO_INTEGRATION_MAIL_TITLE
+-------------------------------
+
+Default value: "%s latest tests didn\'t passed"
+
+"Title" field for report emails, `%s` is the repository `URL`.
+
+DJ_INTEGRATION_DIRECTORY
+--------------------------
+
+Default value: "/tmp/"
+
+Directory where the virtualenv will be created and test runned.
 
 
 What it doesn't do (yet)
