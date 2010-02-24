@@ -46,7 +46,7 @@ DJANGO_INTEGRATION_MAILS
 
 Default value: []
 
-A list of emails where the failing tests are sent.
+A list of emails where the failing tests are sent. You can override this value within the administration.
 
 DJANGO_INTEGRATION_FROM_MAIL
 ------------------------------

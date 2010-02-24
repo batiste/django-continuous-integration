@@ -77,8 +77,10 @@ setup(
     data_files=data_files,
     zip_safe=False,
     test_suite="nose.collector",
-    install_requires=[
-    ],
+    install_requires=(
+        'django',
+        'virtualenv',
+    ),
     classifiers=[
         "Development Status :: 4 - Beta",
         "Framework :: Django",
