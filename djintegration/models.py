@@ -70,17 +70,7 @@ class TestReport(models.Model):
     state = models.CharField(_('State'), choices=STATE, max_length=10)
 
     def fail(self):
-        result = self.result.lower()
-        def contains(text):
-            return result.find(text) != -1
-
-        if contains('0 error') and contains('0 failure'):
-            return False
-
-        if contains('error') or contains('failure'):
-            return True
-
-        return False
+        return self.state == 'fail'
     
     class Meta:
         verbose_name = _('Test report')
