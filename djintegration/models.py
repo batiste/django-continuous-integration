@@ -17,22 +17,36 @@ STATE = (
     ('pass', 'Pass'),
 )
 
+VIRTUAL_ENV = (
+    ('setuptool', 'Setuptools'),
+    ('distribute', 'Distribute'),
+)
+
+
+
 
 class Repository(models.Model):
     """Represent a repository"""
 
     url = models.CharField(_('URL'), blank=False, max_length=250)
-    type = models.CharField(_('Type'), choices=REPOS, max_length=10)
+    type = models.CharField(_('Type'), choices=REPOS, max_length=10, default='git')
     last_commit = models.CharField(_('Last commit'), max_length=100,
         blank=True)
     creation_date = models.DateTimeField(_('creation date'), editable=False,
         default=datetime.now)
 
+    install_command = models.TextField(_('Install command'),
+        blank=True,
+        help_text='Default: "python setup.py install"')
+
+    #virtual_env_type = models.CharField(_('Virtual environnement type'),
+    #    choices=VIRTUAL_ENV, max_length=10, default="setuptools")
+
     test_command = models.TextField(_('Test command'),
         blank=True,
         help_text='Default: "python setup.py test"')
 
-    state = models.CharField(_('State'), choices=STATE, max_length=10)
+    state = models.CharField(_('State'), choices=STATE, max_length=10, default='fail')
 
     emails = models.TextField(_('Notification emails'),
         blank=True,
@@ -43,6 +57,9 @@ class Repository(models.Model):
 
     def last_test_report(self):
         return TestReport.objects.filter(repository=self).latest('creation_date')
+
+    def get_install_command(self):
+        return self.install_command or 'python setup.py install'
 
     def get_test_command(self):
         return self.test_command or 'python setup.py test'
@@ -63,8 +80,11 @@ class TestReport(models.Model):
         default=datetime.now)
 
     commit = models.CharField(_('Commit'), max_length=100, blank=False)
-    result = models.TextField(blank=True)
+
     install = models.TextField(blank=True)
+    
+    result = models.TextField(blank=True)
+    
     author = models.CharField(_('Author'), max_length=100, blank=True)
 
     state = models.CharField(_('State'), choices=STATE, max_length=10)

@@ -1,16 +1,15 @@
 
+import re
 import os
 import md5
 import sys
 import shlex
 from subprocess import Popen, PIPE, STDOUT
+from django.conf import settings
+from djintegration.models import TestReport
 
-def system(command_line):
-    command_line = str(command_line)
-    args = shlex.split(command_line)
-    p = Popen(args, stdout=PIPE, stderr=STDOUT)
-    output, errors = p.communicate()
-    return output, p.returncode
+TESTED_APP_DIR = 'tested_app/'
+INT_DIR = getattr(settings, 'DJANGO_INTEGRATION_DIRECTORY', '/tmp/')
 
 def with_dir(dirname, fun):
     cwd = os.getcwd()
@@ -35,12 +34,21 @@ class RepoBackend(object):
     def __init__(self, repo, *args, **kwargs):
         self.repo = repo
 
+    def system(self, commands, activate=False):
+        commands = str(commands)
+        if activate:
+            commands = '. ' + self.dirname() + 'bin/activate;' + commands
+        commands = commands.replace('\r\n', ';')
+        args = shlex.split(commands)
+        process = Popen(commands, shell=True, stdout=PIPE, stderr=STDOUT)
+        returncode = process.returncode
+        output, errors = process.communicate()
+        return output, returncode
+
     def dirname(self):
         m = md5.new()
         m.update(self.repo.url)
-        from django.conf import settings
-        rdir = getattr(settings, 'DJ_INTEGRATION_DIRECTORY', '/tmp/')
-        return rdir + m.hexdigest() + '/'
+        return INT_DIR + m.hexdigest() + '/'
 
     def exist(self):
         def _exist():
@@ -48,33 +56,33 @@ class RepoBackend(object):
                 return True
             return False
         from django.conf import settings
-        rdir = getattr(settings, 'DJ_INTEGRATION_DIRECTORY', '/tmp/')
-        return with_dir(rdir, _exist)
+        return with_dir(INT_DIR, _exist)
 
     def command_virtualenv(self, cmd):
         def _command():
-            return system(cmd)
+            return self.system(cmd)
         return with_dir(self.dirname(), _command)
 
     def command_app(self, cmd):
         def _command():
-            return system(cmd)
-        return with_dir(self.dirname() + 'tested_app/', _command)
-
-    def activate(self):
-        activate_this = self.dirname() + 'bin/activate_this.py'
-        execfile(activate_this, dict(__file__=activate_this))
+            return self.system(cmd, True)
+        return with_dir(self.dirname() + TESTED_APP_DIR, _command)
 
     def setup_env(self):
-        system('virtualenv --no-site-packages %s' % self.dirname())
-        self.activate()
-        self.command_virtualenv(self.checkout_cmd % (self.repo.url, 'tested_app'))
+        self.system('virtualenv --no-site-packages %s' % self.dirname())
+        return self.command_virtualenv(self.checkout_cmd %
+            (self.repo.url, 'tested_app'))
 
-    def install_dependencies(self):
-        return self.command_app('python setup.py install')
+    def run_tests(self):
+        cmd = self.repo.get_test_command()
+        return self.command_app(cmd)
+
+    def install(self):
+        cmd = self.repo.get_install_command()
+        return self.command_app(cmd)
 
     def teardown_env(self):
-        system('rm -Rf %s' % self.dirname())
+        self.system('rm -Rf %s' % self.dirname())
 
     def make_report(self):
         
@@ -85,16 +93,12 @@ class RepoBackend(object):
         if self.repo.last_commit != commit or len(commit) == 0:
             self.repo.last_commit = commit
 
-            install_result, returncode1 = self.install_dependencies()
+            install_result, returncode1 = self.install()
             
-            test_result, returncode2 = self.command_app(
-                self.repo.get_test_command())
+            test_result, returncode2 = self.run_tests()
             author = self.last_commit_author()
 
             result_state = 'pass' if returncode2 == 0 else 'fail'
-            # this is only to keep unit tests possible without
-            # having to setup the django settings module
-            from djintegration.models import TestReport
             new_test = TestReport(
                 repository=self.repo,
                 install=install_result,

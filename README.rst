@@ -62,8 +62,8 @@ Default value: "%s latest tests didn\'t passed"
 
 "Title" field for report emails, `%s` is the repository `URL`.
 
-DJ_INTEGRATION_DIRECTORY
---------------------------
+DJANGO_INTEGRATION_DIRECTORY
+--------------------------------
 
 Default value: "/tmp/"
 
