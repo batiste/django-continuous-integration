@@ -24,6 +24,7 @@ setup(
     zip_safe=False,
     test_suite="nose.collector",
     install_requires=(
+        'nose',
         'django',
         'virtualenv',
     ),
