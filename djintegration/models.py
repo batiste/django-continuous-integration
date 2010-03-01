@@ -37,7 +37,7 @@ class Repository(models.Model):
         default=datetime.now)
 
     virtual_env_type = models.CharField(_('Virtual environnement'),
-        choices=VIRTUAL_ENV, max_length=16, default="vsetuptool")
+        choices=VIRTUAL_ENV, max_length=16, default="vs")
 
     install_command = models.TextField(_('Install command'),
         blank=True,

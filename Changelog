@@ -2,6 +2,12 @@
 CHANGELOG
 =============
 
+
+
+Added a column the install commands::
+
+    ALTER TABLE djintegration_repository ADD COLUMN virtual_env_type varchar(16) default "vs";
+
 Added a column the install commands::
 
     ALTER TABLE djintegration_repository ADD COLUMN install_command text default "";
