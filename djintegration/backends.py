@@ -43,16 +43,15 @@ class RepoBackend(object):
     def __init__(self, repo, *args, **kwargs):
         self.repo = repo
 
-    def system(self, commands, activate=False):
+    def system(self, commands):
         commands = str(commands)
         if self.use_virtualenv:
             commands = '. ' + self.dirname() + 'bin/activate;' + commands
         commands = commands.replace('\r\n', ';')
         args = shlex.split(commands)
         process = Popen(commands, shell=True, stdout=PIPE, stderr=STDOUT)
-        returncode = process.returncode
         output, errors = process.communicate()
-        return output, returncode
+        return output, process.returncode
 
     def dirname(self):
         m = md5.new()
@@ -74,7 +73,7 @@ class RepoBackend(object):
 
     def command_app(self, cmd):
         def _command():
-            return self.system(cmd, True)
+            return self.system(cmd)
         return with_dir(self.dirname() + TESTED_APP_DIR, _command)
 
     def setup_env(self):
