@@ -43,13 +43,16 @@ class RepoBackend(object):
     def __init__(self, repo, *args, **kwargs):
         self.repo = repo
 
-    def system(self, commands):
+    def system(self, commands, activate=False):
         commands = str(commands)
-        if self.use_virtualenv:
-            commands = '. ' + self.dirname() + 'bin/activate;' + commands
+        # it seems to be the only thing that work properly
+        # ./bin/activate fails
+        if activate:
+            activate_this = self.dirname()+'/bin/activate_this.py'
+            execfile(activate_this, dict(__file__=activate_this))
         commands = commands.replace('\r\n', ';')
         args = shlex.split(commands)
-        process = Popen(commands, shell=True, stdout=PIPE, stderr=STDOUT)
+        process = Popen(args, stdout=PIPE, stderr=STDOUT)
         output, errors = process.communicate()
         return output, process.returncode
 
@@ -71,9 +74,9 @@ class RepoBackend(object):
             return self.system(cmd)
         return with_dir(self.dirname(), _command)
 
-    def command_app(self, cmd):
+    def command_app(self, cmd, activate=False):
         def _command():
-            return self.system(cmd)
+            return self.system(cmd, activate)
         return with_dir(self.dirname() + TESTED_APP_DIR, _command)
 
     def setup_env(self):
@@ -93,11 +96,11 @@ class RepoBackend(object):
 
     def run_tests(self):
         cmd = self.repo.get_test_command()
-        return self.command_app(cmd)
+        return self.command_app(cmd, True)
 
     def install(self):
         cmd = self.repo.get_install_command()
-        return self.command_app(cmd)
+        return self.command_app(cmd, True)
 
     def teardown_env(self):
         shutil.rmtree(self.dirname())
