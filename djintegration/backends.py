@@ -5,11 +5,18 @@ import md5
 import sys
 import shlex
 from subprocess import Popen, PIPE, STDOUT
-from django.conf import settings
-from djintegration.models import TestReport
+
+# To keep tests running
+try:
+    from django.conf import settings
+    from djintegration.models import TestReport
+    INT_DIR = getattr(settings, 'DJANGO_INTEGRATION_DIRECTORY', '/tmp/')
+except ImportError:
+    INT_DIR = '/tmp/'
+    TestReport = None
 
 TESTED_APP_DIR = 'tested_app/'
-INT_DIR = getattr(settings, 'DJANGO_INTEGRATION_DIRECTORY', '/tmp/')
+
 
 def with_dir(dirname, fun):
     cwd = os.getcwd()
