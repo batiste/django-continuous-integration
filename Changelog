@@ -4,7 +4,7 @@ CHANGELOG
 
 Added a column the install commands::
 
-    ALTER TABLE djintegration_testreport ADD COLUMN install_command text default "";
+    ALTER TABLE djintegration_repository ADD COLUMN install_command text default "";
 
 Added a column for overrding email notifications::
 
