@@ -4,6 +4,7 @@ import os
 import md5
 import sys
 import shlex
+import shutil
 from subprocess import Popen, PIPE, STDOUT
 
 # To keep tests running
@@ -35,6 +36,7 @@ def line_that_starts_with(log, start):
 
 class RepoBackend(object):
 
+    use_virtualenv = False
     checkout_cmd = None
     update_cmd = None
 
@@ -43,7 +45,7 @@ class RepoBackend(object):
 
     def system(self, commands, activate=False):
         commands = str(commands)
-        if activate:
+        if self.use_virtualenv:
             commands = '. ' + self.dirname() + 'bin/activate;' + commands
         commands = commands.replace('\r\n', ';')
         args = shlex.split(commands)
@@ -65,7 +67,7 @@ class RepoBackend(object):
         from django.conf import settings
         return with_dir(INT_DIR, _exist)
 
-    def command_virtualenv(self, cmd):
+    def command_env(self, cmd):
         def _command():
             return self.system(cmd)
         return with_dir(self.dirname(), _command)
@@ -76,8 +78,18 @@ class RepoBackend(object):
         return with_dir(self.dirname() + TESTED_APP_DIR, _command)
 
     def setup_env(self):
-        self.system('virtualenv --no-site-packages %s' % self.dirname())
-        return self.command_virtualenv(self.checkout_cmd %
+        virtual_env_commands = {
+            'vs':'virtualenv --no-site-packages %s',
+            'vd':'virtualenv --no-site-packages %s --distribute'
+        }
+        cmd = virtual_env_commands.get(self.repo.virtual_env_type, None)
+        if cmd:
+            self.system(cmd % self.dirname())
+            self.use_virtualenv = True
+        else:
+            if not os.path.isdir(self.dirname()):
+                os.makedirs(self.dirname())
+        return self.command_env(self.checkout_cmd %
             (self.repo.url, 'tested_app'))
 
     def run_tests(self):
@@ -89,7 +101,7 @@ class RepoBackend(object):
         return self.command_app(cmd)
 
     def teardown_env(self):
-        self.system('rm -Rf %s' % self.dirname())
+        shutil.rmtree(self.dirname())
 
     def make_report(self):
         

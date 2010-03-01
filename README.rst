@@ -38,6 +38,17 @@ test report model.
 The success or failure of the test is determined by the return code
 of the test command.
 
+Using buildout
+===============
+
+If you use builout with your project, you will not need any virtual environnement. Choose "No virtual environnement" in the
+admin options. Then you can execute your builout commands within the install textarea::
+
+    cd your-project/ (if necessary)
+    python bootstrap.py --distribute
+    ./bin/buildout -v
+
+
 Settings
 ===========
 

@@ -18,11 +18,12 @@ STATE = (
 )
 
 VIRTUAL_ENV = (
-    ('setuptool', 'Setuptools'),
-    ('distribute', 'Distribute'),
+    ('vs', 'Virtualenv with Setuptools'),
+    ('vd', 'Virtualenv with Distribute >= 1.4.4'),
+    #('bs', 'Buildout with Setuptools'),
+    #('bd', 'Buildout with Distribute'),
+    ('no', 'No virtual environnement'),
 )
-
-
 
 
 class Repository(models.Model):
@@ -35,12 +36,12 @@ class Repository(models.Model):
     creation_date = models.DateTimeField(_('creation date'), editable=False,
         default=datetime.now)
 
+    virtual_env_type = models.CharField(_('Virtual environnement'),
+        choices=VIRTUAL_ENV, max_length=16, default="vsetuptool")
+
     install_command = models.TextField(_('Install command'),
         blank=True,
         help_text='Default: "python setup.py install"')
-
-    #virtual_env_type = models.CharField(_('Virtual environnement type'),
-    #    choices=VIRTUAL_ENV, max_length=10, default="setuptools")
 
     test_command = models.TextField(_('Test command'),
         blank=True,
