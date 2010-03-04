@@ -117,7 +117,7 @@ class RepoBackend(object):
         commit = self.last_commit()
         new_test = None
         
-        if self.repo.last_commit != commit or len(commit) == 0 or True:
+        if self.repo.last_commit != commit or len(commit) == 0:
             self.repo.last_commit = commit
 
             install_result, returncode1 = self.install()
