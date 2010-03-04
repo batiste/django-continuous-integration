@@ -1,7 +1,6 @@
 
 import re
 import os
-import md5
 import sys
 import shlex
 import shutil
@@ -26,6 +25,14 @@ def line_that_starts_with(log, start):
         if line.startswith(start):
             return line.split(start)[1].strip()
 
+def is_virtualenv_command(cmd):
+    if (cmd.startswith('easy_install') or
+        cmd.startswith('pip') or
+        cmd.startswith('python')):
+        return True
+    else:
+        return False
+
 class RepoBackend(object):
 
     use_virtualenv = False
@@ -37,7 +44,7 @@ class RepoBackend(object):
 
     def system(self, commands):
         commands = str(commands)
-        commands = commands.replace('\r\n', ';')
+        
         args = shlex.split(commands)
         process = Popen(args, stdout=PIPE, stderr=STDOUT)
         output, errors = process.communicate()
@@ -53,11 +60,17 @@ class RepoBackend(object):
         return os.path.join(INT_DIR, self.repo.dirname() + '-cov/')
 
     def command_env(self, cmd):
+        if is_virtualenv_command(cmd):
+            cmd = 'bin/' + cmd
         def _command():
             return self.system(cmd)
         return with_dir(self.dirname(), _command)
 
+
+
     def command_app(self, cmd):
+        if is_virtualenv_command(cmd):
+            cmd = '../bin/' + cmd
         def _command():
             return self.system(cmd)
         return with_dir(self.dirname() + TESTED_APP_DIR, _command)
@@ -74,6 +87,7 @@ class RepoBackend(object):
             'vd':'virtualenv --no-site-packages %s --distribute'
         }
         cmd = virtual_env_commands.get(self.repo.virtual_env_type, None)
+        
         if cmd:
             self.system(cmd % self.dirname())
             self.use_virtualenv = True
@@ -83,19 +97,27 @@ class RepoBackend(object):
 
         # it seems to be the only thing that work properly
         # ./bin/activate fails
-        activate_this = self.dirname()+'/bin/activate_this.py'
+        activate_this = self.dirname() + 'bin/activate_this.py'
         execfile(activate_this, dict(__file__=activate_this))
         
         return self.command_env(self.checkout_cmd %
             (self.repo.url, 'tested_app'))
 
     def run_tests(self):
-        cmd = self.repo.get_test_command()
-        return self.command_app(cmd)
+        cmds = self.repo.get_test_command()
+        cmds = cmds.replace('\r\n', ';')
+        result = None
+        for cmd in cmds.split(';'):
+            result = self.command_app(cmd)
+        return result
 
     def install(self):
-        cmd = self.repo.get_install_command()
-        return self.command_app(cmd)
+        cmds = self.repo.get_install_command()
+        cmds = cmds.replace('\r\n', ';')
+        result = None
+        for cmd in cmds.split(';'):
+            result = self.command_app(cmd)
+        return result
 
     def teardown_env(self):
         # search for coverage results directory
@@ -117,7 +139,7 @@ class RepoBackend(object):
         commit = self.last_commit()
         new_test = None
         
-        if self.repo.last_commit != commit or len(commit) == 0:
+        if self.repo.last_commit != commit or len(commit) == 0 or True:
             self.repo.last_commit = commit
 
             install_result, returncode1 = self.install()

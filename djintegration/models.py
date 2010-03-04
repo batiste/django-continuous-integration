@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 from datetime import datetime
-import md5
+import hashlib
 import os
 
 REPOS = (
@@ -74,7 +74,7 @@ class Repository(models.Model):
         return os.path.exists(cov_dir)
 
     def dirname(self):
-        m = md5.new()
+        m = hashlib.md5()
         m.update(self.url)
         return m.hexdigest()
 
