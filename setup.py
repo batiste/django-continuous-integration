@@ -9,7 +9,12 @@ import djintegration
 import os
 templates_dirs = []
 for directory in os.walk('djintegration/templates'):
-    templates_dirs.append(directory[0][6:]+'/*.*')
+    templates_dirs.append(directory[0][14:]+'/*.*')
+
+for directory in os.walk('djintegration/tests'):
+    templates_dirs.append(directory[0][14:]+'/*.txt')
+
+print templates_dirs
 
 setup(
     name='djintegration',
