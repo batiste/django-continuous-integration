@@ -41,18 +41,18 @@ of the test command.
 Using buildout
 ===============
 
-If you use builout with your project, you will not need any virtual environnement. Choose "No virtual environnement" in the
-admin options. Then you can execute your builout commands within the install textarea::
+If you use builout with your project, you will not need any virtual environnement.
+Choose "No virtual environnement" in the admin options.
+Then you can execute your builout commands within the install textarea::
 
-    cd your-project/ (if necessary)
-    python bootstrap.py --distribute
+    python <your-project>/bootstrap.py --distribute
     ./bin/buildout -v
 
 Coverage support
 =================
 
-If you support coverage in your tests, Django continuous will search for the coverage HTML directory. The name
-of the directory has to be `covhtml` or `htmlcov`. You can override this setting::
+If you support coverage in your tests, Django continuous will search for the coverage HTML directory.
+The name of the directory has to be `covhtml` or `htmlcov`. You can override this setting::
 
     DJANGO_INTEGRATION_COV_CANDIDATES = ['htmlcov', 'covhtml', '...']
 

@@ -6,7 +6,7 @@ import shlex
 import shutil
 from subprocess import Popen, PIPE, STDOUT
 
-from djintegration.models import TestReport
+from djintegration.models import TestReport, Repository
 from djintegration.settings import INT_DIR, COV_CANDIDATES, TESTED_APP_DIR
 
 
@@ -157,8 +157,13 @@ class RepoBackend(object):
                 state=result_state,
             )
             new_test.save()
-            self.repo.state = result_state
-            self.repo.save()
+
+            # this to avoid to override things that could have been modified in
+            # the admin.
+            save_repo = Repository.objects.get(pk=self.repo.pk)
+            save_repo.state = result_state
+            save_repo.last_commit = commit
+            save_repo.save()
         
         self.teardown_env()
         return new_test
