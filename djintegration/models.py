@@ -1,9 +1,13 @@
 """Repositories ``models``."""
+from djintegration.settings import INT_DIR
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 from datetime import datetime
+import md5
+import os
 
 REPOS = (
     ('git', 'Git'),
@@ -64,6 +68,18 @@ class Repository(models.Model):
 
     def get_test_command(self):
         return self.test_command or 'python setup.py test'
+
+    def has_coverage(self):
+        cov_dir = os.path.join(INT_DIR, self.dirname() + '-cov/')
+        return os.path.exists(cov_dir)
+
+    def dirname(self):
+        m = md5.new()
+        m.update(self.url)
+        return m.hexdigest()
+
+    def coverage_url(self):
+        return self.dirname() + '-cov/index.html'
 
     class Meta:
         get_latest_by = 'creation_date'

@@ -7,16 +7,8 @@ import shlex
 import shutil
 from subprocess import Popen, PIPE, STDOUT
 
-# To keep tests running
-try:
-    from django.conf import settings
-    from djintegration.models import TestReport
-    INT_DIR = getattr(settings, 'DJANGO_INTEGRATION_DIRECTORY', '/tmp/')
-except ImportError:
-    INT_DIR = '/tmp/'
-    TestReport = None
-
-TESTED_APP_DIR = 'tested_app/'
+from djintegration.models import TestReport
+from djintegration.settings import INT_DIR, COV_CANDIDATES, TESTED_APP_DIR
 
 
 def with_dir(dirname, fun):
@@ -43,13 +35,8 @@ class RepoBackend(object):
     def __init__(self, repo, *args, **kwargs):
         self.repo = repo
 
-    def system(self, commands, activate=False):
+    def system(self, commands):
         commands = str(commands)
-        # it seems to be the only thing that work properly
-        # ./bin/activate fails
-        if activate:
-            activate_this = self.dirname()+'/bin/activate_this.py'
-            execfile(activate_this, dict(__file__=activate_this))
         commands = commands.replace('\r\n', ';')
         args = shlex.split(commands)
         process = Popen(args, stdout=PIPE, stderr=STDOUT)
@@ -57,29 +44,31 @@ class RepoBackend(object):
         return output, process.returncode
 
     def dirname(self):
-        m = md5.new()
-        m.update(self.repo.url)
-        return INT_DIR + m.hexdigest() + '/'
+        return os.path.join(INT_DIR, self.repo.dirname() + '/')
 
-    def exist(self):
-        def _exist():
-            if os.path.exists(self.dirname()):
-                return True
-            return False
-        from django.conf import settings
-        return with_dir(INT_DIR, _exist)
+    def app_dirname(self):
+        return os.path.join(self.dirname(), TESTED_APP_DIR)
+
+    def cov_dirname(self):
+        return os.path.join(INT_DIR, self.repo.dirname() + '-cov/')
 
     def command_env(self, cmd):
         def _command():
             return self.system(cmd)
         return with_dir(self.dirname(), _command)
 
-    def command_app(self, cmd, activate=False):
+    def command_app(self, cmd):
         def _command():
-            return self.system(cmd, activate)
+            return self.system(cmd)
         return with_dir(self.dirname() + TESTED_APP_DIR, _command)
 
     def setup_env(self):
+        # trash the old virtual env
+        try:
+            shutil.rmtree(self.dirname())
+        except OSError:
+            pass
+        
         virtual_env_commands = {
             'vs':'virtualenv --no-site-packages %s',
             'vd':'virtualenv --no-site-packages %s --distribute'
@@ -91,19 +80,36 @@ class RepoBackend(object):
         else:
             if not os.path.isdir(self.dirname()):
                 os.makedirs(self.dirname())
+
+        # it seems to be the only thing that work properly
+        # ./bin/activate fails
+        activate_this = self.dirname()+'/bin/activate_this.py'
+        execfile(activate_this, dict(__file__=activate_this))
+        
         return self.command_env(self.checkout_cmd %
             (self.repo.url, 'tested_app'))
 
     def run_tests(self):
         cmd = self.repo.get_test_command()
-        return self.command_app(cmd, True)
+        return self.command_app(cmd)
 
     def install(self):
         cmd = self.repo.get_install_command()
-        return self.command_app(cmd, True)
+        return self.command_app(cmd)
 
     def teardown_env(self):
-        shutil.rmtree(self.dirname())
+        # search for coverage results directory
+        cov_dir = None
+        for directories in os.walk(self.app_dirname()):
+            for candidate in COV_CANDIDATES:
+                if candidate in directories[1]:
+                    cov_dir = os.path.join(directories[0], candidate)
+        if cov_dir:
+            try:
+                shutil.rmtree(self.cov_dirname())
+            except OSError:
+                pass
+            shutil.move(cov_dir, self.cov_dirname())
 
     def make_report(self):
         
@@ -111,7 +117,7 @@ class RepoBackend(object):
         commit = self.last_commit()
         new_test = None
         
-        if self.repo.last_commit != commit or len(commit) == 0:
+        if self.repo.last_commit != commit or len(commit) == 0 or True:
             self.repo.last_commit = commit
 
             install_result, returncode1 = self.install()
