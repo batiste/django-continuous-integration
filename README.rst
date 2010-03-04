@@ -48,6 +48,16 @@ admin options. Then you can execute your builout commands within the install tex
     python bootstrap.py --distribute
     ./bin/buildout -v
 
+Coverage support
+=================
+
+If you support coverage in your tests, Django continuous will search for the coverage HTML directory. The name
+of the directory has to be `covhtml` or `htmlcov`. You can override this setting::
+
+    DJANGO_INTEGRATION_COV_CANDIDATES = ['htmlcov', 'covhtml', '...']
+
+If found, the coverage HTML directory will be served via the web interface.
+
 
 Settings
 ===========

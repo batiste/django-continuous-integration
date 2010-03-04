@@ -27,6 +27,7 @@ setup(
         'nose',
         'django',
         'virtualenv',
+        #'coverage',
     ),
     classifiers=[
         "Development Status :: 4 - Beta",
