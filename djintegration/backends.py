@@ -141,12 +141,19 @@ class RepoBackend(object):
         commit = self.last_commit()
         new_test = None
         
-        if self.repo.last_commit != commit or len(commit) == 0 or True:
+        if self.repo.last_commit != commit or len(commit) == 0:
             #self.repo.last_commit = commit
 
             install_result, returncode1 = self.install()
+            # mysql text field has a limitation on how large a text field can be
+            # 65,535 bytes ~64kb
+
+            mysql_text_limit = 40000
+            install_result = install_result[-mysql_text_limit:]
             
             test_result, returncode2 = self.run_tests()
+            test_result = test_result[-mysql_text_limit:]
+            
             author = self.last_commit_author()
 
             result_state = 'pass' if returncode2 == 0 else 'fail'
