@@ -108,7 +108,8 @@ class RepoBackend(object):
         cmds = cmds.replace('\r\n', ';')
         result = None
         for cmd in cmds.split(';'):
-            result = self.command_app(cmd)
+            if len(cmd):
+                result = self.command_app(cmd)
         return result
 
     def install(self):
@@ -116,7 +117,8 @@ class RepoBackend(object):
         cmds = cmds.replace('\r\n', ';')
         result = None
         for cmd in cmds.split(';'):
-            result = self.command_app(cmd)
+            if len(cmd):
+                result = self.command_app(cmd)
         return result
 
     def teardown_env(self):
