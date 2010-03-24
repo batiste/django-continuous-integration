@@ -11,6 +11,8 @@ this tools is meant to be used with any python project that has tests.
 
 Django continuous integration currently support `Git`, `Subversion` and `Mercurial`.
 
+.. image:: http://img230.imageshack.us/img230/5556/djangocontinuous.png
+
 
 How does it work
 =================
@@ -116,10 +118,4 @@ Like all Django application you need to syncdb::
 
 Then go the administration interface and add your repositories.
 
-
-
-Frontend
-=========
-
-.. image:: http://img230.imageshack.us/img230/5556/djangocontinuous.png
 
