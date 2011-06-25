@@ -9,6 +9,8 @@ ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
 
+DJANGO_INTEGRATION_DIRECTORY = '/opt/dci'
+
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.

@@ -12,12 +12,12 @@ TITLE = getattr(settings, 'DJANGO_INTEGRATION_MAIL_TITLE',
     '%s latest tests didn\'t passed')
 
 
-def make_test_reports():
+def make_test_reports(force=False):
 
     tests_to_report = []
 
     for repo in Repository.objects.all():
-        print "Making test report for %s" % repo.url
+        print "Making test report for %s (%s)" % (repo.name, repo.url)
         if repo.type == 'git':
             backend = GitBackend(repo)
         elif repo.type == 'svn':
@@ -25,15 +25,15 @@ def make_test_reports():
         elif repo.type == 'hg':
             backend = MercurialBackend(repo)
 
-        new_test = backend.make_report()
+        new_test = backend.make_report(force)
         if new_test and new_test.fail():
             tests_to_report.append(new_test)
 
 
     for test in tests_to_report:
-        
+
         repo = test.repository
-        
+
         if repo.emails:
             emails = repo.emails.split(',')
         else:
@@ -48,5 +48,5 @@ def make_test_reports():
             message,
             FROM,
             emails,
-            fail_silently=False
+            fail_silently=True
         )

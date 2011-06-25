@@ -3,6 +3,7 @@
 *~
 *.sqlite
 *.sqlite-journal
+*.build
 djintegration.db
 settings_local.py
 local_settings.py
@@ -18,3 +19,4 @@ devdatabase.db
 bundle_version.gen
 celeryd.log
 celeryd.pid
+testproj/settings.py

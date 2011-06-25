@@ -44,7 +44,8 @@ class RepoBackend(object):
 
     def system(self, commands):
         commands = str(commands)
-        
+        print "commands:", commands
+
         args = shlex.split(commands)
         process = Popen(args, stdout=PIPE, stderr=STDOUT)
         output, errors = process.communicate()
@@ -68,12 +69,15 @@ class RepoBackend(object):
 
 
 
-    def command_app(self, cmd):
+    def command_app(self, cmd, use_test_subpath=False):
         if is_virtualenv_command(cmd):
             cmd = '../bin/' + cmd
         def _command():
             return self.system(cmd)
-        return with_dir(self.dirname() + TESTED_APP_DIR, _command)
+        command_dir = self.dirname() + TESTED_APP_DIR
+        if use_test_subpath:
+            command_dir += '/' + self.repo.test_subpath
+        return with_dir(command_dir, _command)
 
     def setup_env(self):
         # trash the old virtual env
@@ -81,13 +85,13 @@ class RepoBackend(object):
             shutil.rmtree(self.dirname())
         except OSError:
             pass
-        
+
         virtual_env_commands = {
             'vs':'virtualenv --no-site-packages %s',
             'vd':'virtualenv --no-site-packages %s --distribute'
         }
         cmd = virtual_env_commands.get(self.repo.virtual_env_type, None)
-        
+
         if cmd:
             self.system(cmd % self.dirname())
             self.use_virtualenv = True
@@ -99,24 +103,24 @@ class RepoBackend(object):
         # ./bin/activate fails
         activate_this = self.dirname() + 'bin/activate_this.py'
         execfile(activate_this, dict(__file__=activate_this))
-        
+
         return self.command_env(self.checkout_cmd %
             (self.repo.url, 'tested_app'))
 
     def run_tests(self):
         cmds = self.repo.get_test_command()
-        cmds = cmds.replace('\r\n', ';')
+        cmds = cmds.replace('\r\n', ';;')
         result = None
-        for cmd in cmds.split(';'):
+        for cmd in cmds.split(';;'):
             if len(cmd):
-                result = self.command_app(cmd)
+                result = self.command_app(cmd, use_test_subpath=True)
         return result
 
     def install(self):
         cmds = self.repo.get_install_command()
-        cmds = cmds.replace('\r\n', ';')
+        cmds = cmds.replace('\r\n', ';;')
         result = None
-        for cmd in cmds.split(';'):
+        for cmd in cmds.split(';;'):
             if len(cmd):
                 result = self.command_app(cmd)
         return result
@@ -135,13 +139,13 @@ class RepoBackend(object):
                 pass
             shutil.move(cov_dir, self.cov_dirname())
 
-    def make_report(self):
-        
+    def make_report(self, force=False):
+
         self.setup_env()
         commit = self.last_commit()
         new_test = None
-        
-        if self.repo.last_commit != commit or len(commit) == 0:
+
+        if force or self.repo.last_commit != commit or len(commit) == 0:
             #self.repo.last_commit = commit
 
             install_result, returncode1 = self.install()
@@ -150,10 +154,10 @@ class RepoBackend(object):
 
             mysql_text_limit = 40000
             install_result = install_result[-mysql_text_limit:]
-            
+
             test_result, returncode2 = self.run_tests()
             test_result = test_result[-mysql_text_limit:]
-            
+
             author = self.last_commit_author()
 
             result_state = 'pass' if returncode2 == 0 else 'fail'
@@ -173,7 +177,7 @@ class RepoBackend(object):
             save_repo.state = result_state
             save_repo.last_commit = commit
             save_repo.save()
-        
+
         self.teardown_env()
         return new_test
 

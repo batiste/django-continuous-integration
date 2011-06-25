@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 from datetime import datetime
+import string
 import hashlib
 import os
 
@@ -33,6 +34,7 @@ VIRTUAL_ENV = (
 class Repository(models.Model):
     """Represent a repository"""
 
+    name = models.CharField(_('Project Name'), blank=False, max_length=100, unique=True)
     url = models.CharField(_('URL'), blank=False, max_length=250)
     type = models.CharField(_('Type'), choices=REPOS, max_length=10, default='git')
     last_commit = models.CharField(_('Last commit'), max_length=100,
@@ -46,6 +48,9 @@ class Repository(models.Model):
     install_command = models.TextField(_('Install command'),
         blank=True,
         help_text='Default: "python setup.py install"')
+
+    test_subpath = models.CharField(_('Test subpath'), blank=True, max_length=200,
+        help_text="Optional subpath to run the test command. Default is '.'")
 
     test_command = models.TextField(_('Test command'),
         blank=True,
@@ -75,7 +80,8 @@ class Repository(models.Model):
 
     def dirname(self):
         m = hashlib.md5()
-        m.update(self.url)
+        label = "%s%s" % (self.name, self.url)
+        m.update(label)
         return m.hexdigest()
 
     def coverage_url(self):
@@ -87,7 +93,7 @@ class Repository(models.Model):
         verbose_name_plural = _('Repositories')
 
     def __unicode__(self):
-        return "%s" % (self.url)
+        return "%s" % (self.name)
 
 
 class TestReport(models.Model):
@@ -99,20 +105,20 @@ class TestReport(models.Model):
     commit = models.CharField(_('Commit'), max_length=100, blank=False)
 
     install = models.TextField(blank=True)
-    
+
     result = models.TextField(blank=True)
-    
+
     author = models.CharField(_('Author'), max_length=100, blank=True)
 
     state = models.CharField(_('State'), choices=STATE, max_length=10)
 
     def fail(self):
         return self.state == 'fail'
-    
+
     class Meta:
         verbose_name = _('Test report')
         verbose_name_plural = _('Test reports')
-    
+
     def __unicode__(self):
         return "Test report %d (%s, %s)" % (self.pk,
             self.repository.url, self.commit)

@@ -5,9 +5,10 @@
 
 {% for repo in repos %}
 <div class="repository {% if repo.fail %}fail{% else %}pass{% endif%}">
-        <h2><a href="{% url repository repo.id %}">{{ repo.url }}</a></h2>
+        <h2><a href="{% url repository repo.id %}">{{ repo.name }}</a></h2>
         <table>
         <!--<tr><td>Last known commit</td><td>{{ repo.last_commit }}</td></tr>-->
+        <tr><td>Url</td><td>{{ repo.url }}</td></tr>
         <tr><td>Commit</td><td>{{ repo.last_test_report.commit }}</td></tr>
         <tr><td>Last run</td><td>{{ repo.last_test_report.creation_date|date_diff }}</td></tr>
         <tr><td>Author</td><td>{{ repo.last_test_report.author }}</td></tr>
