@@ -46,9 +46,13 @@ class RepoBackend(object):
         commands = str(commands)
         print "commands:", commands
 
-        args = shlex.split(commands)
-        process = Popen(args, stdout=PIPE, stderr=STDOUT)
-        output, errors = process.communicate()
+        if ";" in commands:
+            ret = os.system(commands)
+            return "", ret
+        else:
+            args = shlex.split(commands)
+            process = Popen(args, stdout=PIPE, stderr=STDOUT)
+            output, errors = process.communicate()
         return output, process.returncode
 
     def dirname(self):
