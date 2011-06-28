@@ -2,7 +2,7 @@
 {% load djintegration_tags %}
 {% block body %}
 <a href="{% url latest-reports %}" style="font-size:1.5em">&laquo; Back to fresh reports.</a>
-<h1>Latest tests for <span>{{ repo.name }}</span></h1>
+<h1>Latest tests for <span>{{ repo.name }}</span> -- <a href="/admin/djintegration/repository/{{ repo.id }}/">repo admin</a> </h1>
 
 {% for test in tests %}
 <div class="test {% if test.fail %}fail{% else %}pass{% endif%}">
@@ -15,10 +15,12 @@
         </table>
 
         {% if test.fail %}
-        <h3>Install output</h3>
-        <div class="report collapsed">
-            <pre>{{ test.install }}</pre>
-        </div>
+            {% if test.install %}
+            <h3>Install output</h3>
+            <div class="report collapsed">
+                <pre>{{ test.install }}</pre>
+            </div>
+            {% endif %}
         
         <h3>Test output</h3>
         <div class="report collapsed">
