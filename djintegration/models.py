@@ -120,6 +120,5 @@ class TestReport(models.Model):
         verbose_name_plural = _('Test reports')
 
     def __unicode__(self):
-        return "Test report %d (%s, %s)" % (self.pk,
-            self.repository.url, self.commit)
+        return "Test on %s for %s: %s" % (self.creation_date.strftime("%c"), self.repository.name, self.state)
 
