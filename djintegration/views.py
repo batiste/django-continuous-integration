@@ -1,9 +1,9 @@
 from djintegration.models import Repository, TestReport
-
+from djintegration.tasks import MakeTestReportsTask, ForceTestReportsTask
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-def lastest_reports(request):
+def latest_reports(request):
 
     repos = list(Repository.objects.filter(state='fail')) + \
         list(Repository.objects.filter(state='pass'))
@@ -18,3 +18,16 @@ def repository(request, repo_id):
 
     return render_to_response('djintegration/repository.html',
         RequestContext(request, locals()))
+
+def make_reports(request):
+
+    MakeTestReportsTask.delay()
+    response = latest_reports(request)   
+    return response
+
+def force_reports(request):
+
+    ForceTestReportsTask.delay()
+    response = latest_reports( request )
+    return response
+
