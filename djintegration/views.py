@@ -1,6 +1,7 @@
+import sys
 from djintegration.models import Repository, TestReport
 from djintegration.tasks import MakeTestReportsTask, ForceTestReportsTask
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 
 def latest_reports(request):
@@ -21,13 +22,15 @@ def repository(request, repo_id):
 
 def make_reports(request):
 
+    # print "REMOTE ADDR:", request.META['REMOTE_ADDR']
+    # sys.stdout.flush()
     MakeTestReportsTask.delay()
     response = latest_reports(request)   
-    return response
+    return redirect('/')
 
 def force_reports(request):
 
     ForceTestReportsTask.delay()
     response = latest_reports( request )
-    return response
+    return redirect('/')
 

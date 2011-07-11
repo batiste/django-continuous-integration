@@ -2,23 +2,23 @@
 import os
 PROJECT_DIR = os.path.dirname(__file__)
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
+    ('somebody', 'somebody@gmail.com'),
 )
 
-DJANGO_INTEGRATION_DIRECTORY = '/opt/dci'
+DJANGO_INTEGRATION_DIRECTORY = '/tmp/dci'
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = 'djintegration.db'             # Or path to database file if using sqlite3.
-DATABASE_USER = ''             # Not used with sqlite3.
-DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+DATABASE_ENGINE = 'sqlite3' # 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+DATABASE_NAME = 'dci.db'    # Or path to database file if using sqlite3.
+DATABASE_USER = ''          # Not used with sqlite3.
+DATABASE_PASSWORD = ''      # Not used with sqlite3.
+DATABASE_HOST = ''          # Set to empty string for localhost. Not used with sqlite3.
+DATABASE_PORT = ''          # Set to empty string for default. Not used with sqlite3.
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -52,7 +52,7 @@ MEDIA_URL = ''
 ADMIN_MEDIA_PREFIX = '/media/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'l0@ku!3&wi4kx4$yqnwctw*cf2kmi(0p=#3n!jl!0kp!o18wn^'
+SECRET_KEY = 'kwjdckjwdcl0@ku!3&wi4kx4$yqnwctw*cf2kmi(0p=#3n!jl!0kp!o18wn^'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -65,6 +65,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'testproj.middleware.RestrictMiddleware',
 )
 
 ROOT_URLCONF = 'testproj.urls'
@@ -84,5 +85,33 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.admin',
+    'django.contrib.staticfiles',
     'djintegration',
+    'djkombu',
+    'djcelery',
 )
+
+# commit hook callback settings
+# Your commit hook must send a POST request to /make
+# Some value in the post REQUEST must include the REQUIRED_CALLBACK_STRING as well
+#   as one of the CONFRIM_CALLBACK_STRINGS. (The IP address of the callback sender
+#   does not need to be in the IP_WHITELIST.)
+# To change this behaviour, reqork the middleware.py file.
+# This stuff was tested with unfuddle.com.
+
+# IP_WHITELIST = ['127.0.0.1']
+# REQUIRED_CALLBACK_STRING = 'repository'
+# CONFIRM_CALLBACK_STRINGS = ['mycompany.com']
+
+# celery settings
+
+import djcelery
+djcelery.setup_loader()
+
+BROKER_BACKEND  = 'djkombu.transport.DatabaseTransport'
+BROKER_HOST     = 'localhost'
+BROKER_PORT     = 5672
+BROKER_USER     = 'someuser'
+BROKER_PASSWORD = 'somepass'
+BROKER_VHOST    = '/'
+
