@@ -36,7 +36,7 @@ class RestrictMiddleware(object):
                 for key, value in request.REQUEST.iteritems():
                     if required_string in value:
                         for callback_string in callback_strings:
-                            if callback_str in value:
+                            if callback_string in value:
                                 return None
 
         # Unexpected request - deny!
