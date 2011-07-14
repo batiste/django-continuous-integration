@@ -122,3 +122,13 @@ class TestReport(models.Model):
     def __unicode__(self):
         return "Test on %s for %s: %s" % (self.creation_date.strftime("%c"), self.repository.name, self.state)
 
+    def result_summary(self):
+        result_array = self.result.split("\n")
+        summary = "No clean result"
+        if len(result_array) > 4:
+            if result_array[-4].startswith("Ran"):
+                summary = "%s -- %s" % (result_array[-4], result_array[-2])
+            else:
+                summary += " %d" % len(result_array)
+        return summary
+

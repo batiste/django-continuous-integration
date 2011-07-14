@@ -12,15 +12,11 @@
         <tr><td>Commit</td><td>{{ repo.last_test_report.commit }}</td></tr>
         <tr><td>Last run</td><td>{{ repo.last_test_report.creation_date|date_diff }}</td></tr>
         <tr><td>Author</td><td>{{ repo.last_test_report.author }}</td></tr>
-        <tr><td>Coverage</td><td>
+        <tr><td>Result</td><td>{{ repo.last_test_report.result_summary }}</td></tr>
         {% if repo.has_coverage %}
-            <a href="{% url serve-integration-dir repo.coverage_url %}">Show the report</a>
-        {% else %}
-            No coverage directory found
+            <tr><td>Coverage</td><td><a href="{% url serve-integration-dir repo.coverage_url %}">Show the report</a></td></tr>
         {% endif %}
-        </td></tr>
         </table>
-
 
 
         {% if repo.fail %}

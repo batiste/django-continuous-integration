@@ -12,6 +12,7 @@
         <tr><td>Commit</td><td>{{ test.commit }}</td></tr>
         <tr><td>Last run</td><td>{{ test.creation_date|date_diff }}</td></tr>
         <tr><td>Author</td><td>{{ test.author }}</td></tr>
+        <tr><td>Result</td><td>{{ test.result_summary }}</td></tr>
         </table>
 
         {% if test.fail %}
