@@ -11,7 +11,7 @@ this tools is meant to be used with any python project that has tests.
 
 Django continuous integration currently support `Git`, `Subversion` and `Mercurial`.
 
-.. image:: https://github.com/batiste/django-continuous-integration/tree/master/docs/shot.png
+.. image:: https://raw.github.com/batiste/django-continuous-integration/master/docs/shot.png
 
 
 How does it work
