@@ -1,0 +1,131 @@
+h1{
+    font:2.1em Georgia,"Times New Roman",Times,serif;
+    font-size:2.2em;
+    margin:0 0 1em 0;
+}
+h1 span {
+    color:#777;
+}
+
+h2{
+    font:1.5em Georgia,"Times New Roman",Times,serif;
+}
+h3{
+    font:1.2em Georgia,"Times New Roman",Times,serif;
+}
+h1, h2, h3, a {
+    color:#bb3010;
+}
+body  {
+    padding:20px;
+    color:#222;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:13px;
+
+}
+
+
+.launch {
+    -moz-box-shadow:inset 0px 1px 0px 0px #caefab;
+    -webkit-box-shadow:inset 0px 1px 0px 0px #caefab;
+    box-shadow:inset 0px 1px 0px 0px #caefab;
+    background-color:#77d42a;
+    -moz-border-radius:6px;
+    -webkit-border-radius:6px;
+    border-radius:6px;
+    border:1px solid #268a16;
+    display:inline-block;
+    color:#306108;
+    font-family:arial;
+    font-size:15px;
+    font-weight:bold;
+    padding:6px 24px;
+    text-decoration:none;
+    text-shadow:1px 1px 0px #aade7c;
+}.launch:hover {
+    background-color:#5cb811;
+}.launch:active {
+    position:relative;
+    top:1px;
+}
+
+.running .launch {
+        -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+        -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+        box-shadow:inset 0px 1px 0px 0px #ffffff;
+        background-color:#ededed;
+        -moz-border-radius:6px;
+        -webkit-border-radius:6px;
+        border-radius:6px;
+        border:1px solid #dcdcdc;
+        display:inline-block;
+        color:#777777;
+        font-family:arial;
+        font-size:15px;
+        font-weight:bold;
+        padding:6px 24px;
+        text-decoration:none;
+        text-shadow:1px 1px 0px #ffffff;
+}
+.running .launch:hover {
+        background-color:#ededed
+}
+.running .launch:active {
+        position:relative;
+        top:1px;
+}
+
+
+.runningb {
+
+}
+
+.repository, .test {
+    width:45%;
+    min-width:400px;
+    margin-right:2%;
+    margin-bottom:2%;
+    border:1px #ddd solid;
+    float:left;
+    -webkit-box-shadow: 5px 5px 3px #ddd;
+    -moz-box-shadow: 5px 5px 3px #ddd;
+    box-shadow: 5px 5px 3px #ddd;
+    padding:1%;
+}
+
+.report pre {
+    border:1px #bbb solid;
+    padding:0.5em;
+    overflow:hidden;
+    background-color:#bbf650;
+    cursor:pointer;
+}
+
+.pass pre {
+    background-color:#bbf650;
+}
+
+.running pre {
+    background-color:#ff8c00;
+}
+
+.collapsed pre {
+    height:2em;
+}
+
+td { padding:0.2em 0.5em; border-bottom:2px #ddd solid; }
+table { width:100%; border-collapse:collapse; }
+
+.fail pre {
+    background-color:#f64320;
+}
+
+#main {
+  overflow:hidden
+}
+
+input[type="checkbox"] {
+  margin:0;
+  padding:0;
+  vertical-align:bottom;
+}

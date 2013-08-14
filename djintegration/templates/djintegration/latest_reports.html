@@ -4,33 +4,7 @@
 <h1>DCI | Fresh test reports | <a href="{% url "admin:djintegration_repository_changelist" %}">admin</a></h1>
 
 {% for repo in repos %}
-<div class="repository {% if repo.fail %}fail{% elif repo.running %}running{% else %}pass{% endif%}">
-        <h2><a href="{% url "repository" repo.id %}">{{ repo.name }}</a></h2>
-        <table>
-        <!--<tr><td>Last known commit</td><td>{{ repo.last_commit }}</td></tr>-->
-        <tr><td>Url</td><td>{{ repo.url }}</td></tr>
-        <tr><td>Commit</td><td>{{ repo.last_test_report.commit }}</td></tr>
-        <tr><td>Last run</td><td>{{ repo.last_test_report.creation_date|date_diff }}</td></tr>
-        <tr><td>Author</td><td>{{ repo.last_test_report.author }}</td></tr>
-        <tr><td>Result</td><td>{{ repo.last_test_report.result_summary|safe }}</td></tr>
-        {% if repo.has_coverage %}
-            <tr><td>Coverage</td><td><a href="{% url "serve-integration-dir" repo.coverage_url %}">Show the report</a></td></tr>
-        {% endif %}
-        </table>
-
-        {% if repo.fail %}
-            {% if repo.last_test_report.install %}
-            <h3>Install output</h3>
-            <div class="report collapsed">
-                <pre>{{ repo.last_test_report.install }}</pre>
-            </div>
-            {% endif %}
-        {% endif %}
-        <h3>Test output</h3>
-        <div class="report collapsed">
-            <pre>{{ repo.last_test_report.result }}</pre>
-        </div>
-</div>
+    {% include "djintegration/repository_partial.html" %}
 {% endfor %}
 
 
@@ -41,6 +15,49 @@
             return false;
         });
     });
+    
+    function updateRepo(button) {
+        var id = $(button).parents(".repository").attr("data-id");
+        $.get("repopart/"+id, function(data) { 
+            $(button).parents(".repository").replaceWith(data);
+        });
+    }
+    
+    function checkStatus(id, l) {
+        $.get("taskstatus/"+id, function(data) {
+            if(data=="False") {
+              $(l).text($(l).text()+'.');
+              setTimeout(function(){checkStatus(id, l);}, 600);
+            } else {
+              $(l).text($(l).text() + " Done, please wait for results.");
+              $(l).parents(".repository").removeClass("running");
+              //$(l).removeClass("runningb");
+              // just enough time to see the result
+              setTimeout(function(){updateRepo(l);}, 2000);
+              
+            }
+        });
+    }
+    
+    $(".launch").click(function(e) {
+      e.preventDefault();
+      var l = this;
+      var repo = $(this).parents(".repository")
+      if($(this).hasClass("runningb")) {
+        return false;
+      }
+      $(this).addClass("runningb");
+
+      repo.addClass("running");
+      var force = repo.find(".force")[0].checked;
+      $.get(l.href+"?force="+force, function(data) {
+        $(l).text("Running ");
+        checkStatus(data, l);
+      });
+      
+      return false;
+    });
+    
 </script>
 
 {% endblock %}

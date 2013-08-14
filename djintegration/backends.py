@@ -159,6 +159,9 @@ class RepoBackend(object):
         self.setup_env()
         commit = self.last_commit()
         new_test = None
+        
+        if self.repo.last_commit == commit:
+            print "No new commit since last test."
 
         if force or self.repo.last_commit != commit or len(commit) == 0:
 
@@ -254,3 +257,13 @@ class MercurialBackend(RepoBackend):
     def get_author(self, log):
         return line_that_starts_with(log, 'user: ')
 
+
+def get_backend(repo):
+    if repo.type == 'git':
+        return GitBackend(repo)
+    elif repo.type == 'svn':
+        return SvnBackend(repo)
+    elif repo.type == 'hg':
+        return MercurialBackend(repo)
+        
+    raise NotImplementedError("Unsuppoted backend %s", repo.type)

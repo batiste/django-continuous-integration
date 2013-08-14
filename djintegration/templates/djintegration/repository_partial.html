@@ -1,0 +1,36 @@
+{% load djintegration_tags %}
+<div id="repo-{{ repo.id }}" data-id="{{ repo.id }}" class="repository {% if repo.fail %}fail{% elif repo.running %}running{% else %}pass{% endif%}">
+        <h2><a href="{% url "repository" repo.id %}">{{ repo.name }}</a></h2>
+        <table>
+        <!--<tr><td>Last known commit</td><td>{{ repo.last_commit }}</td></tr>-->
+        <tr><td>Url</td><td>{{ repo.url }}</td></tr>
+        <tr><td>Commit</td><td>{{ repo.last_test_report.commit }}</td></tr>
+        <tr><td>Last run</td><td>{{ repo.last_test_report.creation_date|date_diff }}</td></tr>
+        <tr><td>Author</td><td>{{ repo.last_test_report.author }}</td></tr>
+        <tr><td>Result</td><td>{{ repo.last_test_report.result_summary|safe }}</td></tr>
+        {% if repo.has_coverage %}
+            <tr><td>Coverage</td><td><a href="{% url "serve-integration-dir" repo.coverage_url %}">Show the report</a></td></tr>
+        {% endif %}
+        </table>
+
+        {% if repo.fail %}
+            {% if repo.last_test_report.install %}
+            <h3>Install output</h3>
+            <div class="report collapsed">
+                <pre>{{ repo.last_test_report.install }}</pre>
+            </div>
+            {% endif %}
+        {% endif %}
+        <h3>Test output</h3>
+        <div class="report collapsed">
+            <pre>{{ repo.last_test_report.result }}</pre>
+        </div>
+        
+        {% if not repo.running %}
+        <p>
+        <a class="launch" href="{% url "make-report" repo.id %}">Run the tests</a> 
+        </p>
+        
+        <label><input type="checkbox" class="force"> Force the tests to be executed even if there is no new commit.</label>
+        {% endif %}
+</div>

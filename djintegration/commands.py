@@ -1,6 +1,6 @@
 
 from djintegration.models import Repository, TestReport
-from djintegration.backends import GitBackend, SvnBackend, MercurialBackend
+from djintegration.backends import get_backend
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
@@ -18,12 +18,7 @@ def make_test_reports(force=False):
 
     for repo in Repository.objects.all():
         print "Making test report for %s (%s)" % (repo.name, repo.url)
-        if repo.type == 'git':
-            backend = GitBackend(repo)
-        elif repo.type == 'svn':
-            backend = SvnBackend(repo)
-        elif repo.type == 'hg':
-            backend = MercurialBackend(repo)
+        backend = get_backend(repo)
 
         new_test = backend.make_report(force)
         if new_test and new_test.fail():

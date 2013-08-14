@@ -4,78 +4,7 @@
 <head>
 <title>{% block title %}Latest test reports from djintegration{% endblock %}</title>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
-<style>
-    h1{
-        font:2.1em Georgia,"Times New Roman",Times,serif;
-        font-size:2.2em;
-        margin:0 0 1em 0;
-    }
-    h1 span {
-        color:#777;
-    }
-    
-    h2{
-        font:1.5em Georgia,"Times New Roman",Times,serif;
-    }
-    h3{
-        font:1.2em Georgia,"Times New Roman",Times,serif;
-    }
-    h1, h2, h3, a {
-        color:#bb3010;
-    }
-    body  {
-        padding:20px;
-        color:#222;
-        font-family:Arial,Helvetica,sans-serif;
-        font-size:13px;
-
-    }
-
-    .repository, .test {
-        width:45%;
-        min-width:400px;
-        margin-right:2%;
-        margin-bottom:2%;
-        border:1px #ddd solid;
-        float:left;
-        -webkit-box-shadow: 5px 5px 3px #ddd;
-        -moz-box-shadow: 5px 5px 3px #ddd;
-        box-shadow: 5px 5px 3px #ddd;
-        padding:1%;
-    }
-
-    .report pre {
-        border:1px #bbb solid;
-        padding:0.5em;
-        overflow:hidden;
-        background-color:#bbf650;
-        cursor:pointer;
-    }
-    
-    .pass pre {
-        background-color:#bbf650;
-    }
-    
-    .running pre {
-        background-color:#ff8c00;
-    }
-
-    .collapsed pre {
-        height:2em;
-    }
-
-    td { padding:0.2em 0.5em; border-bottom:2px #ddd solid; }
-    table { width:100%; border-collapse:collapse; }
-
-    .fail pre {
-        background-color:#f64320;
-    }
-    
-    #main {
-      overflow:hidden
-    }
-
-</style>
+<link href="{{ STATIC_URL }}djintegration/main.css" type='text/css' rel='stylesheet'>
 </head>
 <body>
 <div id="main">
