@@ -1,33 +1,31 @@
 {% extends "djintegration/base.html" %}
 {% load djintegration_tags %}
 {% block body %}
-<a href="{% url latest-reports %}" style="font-size:1.5em">&laquo; Back to fresh reports.</a>
-<h1>Latest tests for <span>{{ repo.name }}</span> -- <a href="/admin/djintegration/repository/{{ repo.id }}/">repo admin</a> </h1>
+<a href="{% url "latest-reports" %}" style="font-size:1.5em">&laquo; Back to fresh reports.</a>
+<h1>DCI | Latest tests for <span>{{ repo.name }}</span> | <a href="{% url "admin:djintegration_repository_change" repo.id %}">Repo administration</a> </h1>
 
 {% for test in tests %}
-<div class="test {% if test.fail %}fail{% else %}pass{% endif%}">
+<div class="repository {% if test.fail %}fail{% elif test.running %}running{% else %}pass{% endif%}">
         <table>
         <!--<tr><td>Last known commit</td><td>{{ repo.last_commit }}</td></tr>-->
         <tr><td>Url</td><td>{{ repo.url }}</td></tr>
         <tr><td>Commit</td><td>{{ test.commit }}</td></tr>
         <tr><td>Last run</td><td>{{ test.creation_date|date_diff }}</td></tr>
         <tr><td>Author</td><td>{{ test.author }}</td></tr>
-        <tr><td>Result</td><td>{{ test.result_summary }}</td></tr>
+        <tr><td>Result</td><td>{{ test.result_summary|safe }}</td></tr>
         </table>
 
-        {% if test.fail %}
-            {% if test.install %}
-            <h3>Install output</h3>
-            <div class="report collapsed">
-                <pre>{{ test.install }}</pre>
-            </div>
-            {% endif %}
-        
+        {% if test.install %}
+        <h3>Install output</h3>
+        <div class="report collapsed">
+            <pre>{{ test.install }}</pre>
+        </div>
+        {% endif %}
+    
         <h3>Test output</h3>
         <div class="report collapsed">
             <pre>{{ test.result }}</pre>
         </div>
-        {% endif %}
 </div>
 {% endfor %}
 

@@ -8,7 +8,7 @@
     h1{
         font:2.1em Georgia,"Times New Roman",Times,serif;
         font-size:2.2em;
-        margin:1em 0;
+        margin:0 0 1em 0;
     }
     h1 span {
         color:#777;
@@ -28,6 +28,7 @@
         color:#222;
         font-family:Arial,Helvetica,sans-serif;
         font-size:13px;
+
     }
 
     .repository, .test {
@@ -35,16 +36,12 @@
         min-width:400px;
         margin-right:2%;
         margin-bottom:2%;
-        border:1px #e5f6e5 solid;
+        border:1px #ddd solid;
         float:left;
-        -webkit-box-shadow: 5px 5px 3px #eee;
-        -moz-box-shadow: 5px 5px 3px #eee;
-        box-shadow: 5px 5px 3px #eee;
+        -webkit-box-shadow: 5px 5px 3px #ddd;
+        -moz-box-shadow: 5px 5px 3px #ddd;
+        box-shadow: 5px 5px 3px #ddd;
         padding:1%;
-    }
-
-    .test.pass {
-        background-color:#bbf650;
     }
 
     .report pre {
@@ -54,23 +51,36 @@
         background-color:#bbf650;
         cursor:pointer;
     }
+    
+    .pass pre {
+        background-color:#bbf650;
+    }
+    
+    .running pre {
+        background-color:#ff8c00;
+    }
 
     .collapsed pre {
         height:2em;
     }
 
-    td { padding:0.2em 0.5em; }
+    td { padding:0.2em 0.5em; border-bottom:2px #ddd solid; }
+    table { width:100%; border-collapse:collapse; }
 
     .fail pre {
-        background-color:#fbb690;
+        background-color:#f64320;
+    }
+    
+    #main {
+      overflow:hidden
     }
 
 </style>
 </head>
 <body>
-
+<div id="main">
 {% block body %}
 {% endblock %}
-
+</div>
 </body>
 <html>

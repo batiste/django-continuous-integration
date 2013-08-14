@@ -1,23 +1,22 @@
 {% extends "djintegration/base.html" %}
 {% load djintegration_tags %}
 {% block body %}
-<h1>Fresh test reports -- <a href="/admin/">admin</a></h1>
+<h1>DCI | Fresh test reports | <a href="{% url "admin:djintegration_repository_changelist" %}">admin</a></h1>
 
 {% for repo in repos %}
-<div class="repository {% if repo.fail %}fail{% else %}pass{% endif%}">
-        <h2><a href="{% url repository repo.id %}">{{ repo.name }}</a></h2>
+<div class="repository {% if repo.fail %}fail{% elif repo.running %}running{% else %}pass{% endif%}">
+        <h2><a href="{% url "repository" repo.id %}">{{ repo.name }}</a></h2>
         <table>
         <!--<tr><td>Last known commit</td><td>{{ repo.last_commit }}</td></tr>-->
         <tr><td>Url</td><td>{{ repo.url }}</td></tr>
         <tr><td>Commit</td><td>{{ repo.last_test_report.commit }}</td></tr>
         <tr><td>Last run</td><td>{{ repo.last_test_report.creation_date|date_diff }}</td></tr>
         <tr><td>Author</td><td>{{ repo.last_test_report.author }}</td></tr>
-        <tr><td>Result</td><td>{{ repo.last_test_report.result_summary }}</td></tr>
+        <tr><td>Result</td><td>{{ repo.last_test_report.result_summary|safe }}</td></tr>
         {% if repo.has_coverage %}
-            <tr><td>Coverage</td><td><a href="{% url serve-integration-dir repo.coverage_url %}">Show the report</a></td></tr>
+            <tr><td>Coverage</td><td><a href="{% url "serve-integration-dir" repo.coverage_url %}">Show the report</a></td></tr>
         {% endif %}
         </table>
-
 
         {% if repo.fail %}
             {% if repo.last_test_report.install %}
@@ -44,6 +43,4 @@
     });
 </script>
 
-</body>
-<html>
 {% endblock %}

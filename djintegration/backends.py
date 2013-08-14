@@ -5,9 +5,13 @@ import sys
 import shlex
 import shutil
 from subprocess import Popen, PIPE, STDOUT
+from datetime import datetime, timedelta
 
 from djintegration.models import TestReport, Repository
 from djintegration.settings import INT_DIR, COV_CANDIDATES, TESTED_APP_DIR
+from djintegration.settings import MAX_RUNNING_TIME
+
+MAX_RUN_DELTA = timedelta(seconds=MAX_RUNNING_TIME)
 
 
 def with_dir(dirname, fun):
@@ -144,39 +148,58 @@ class RepoBackend(object):
             shutil.move(cov_dir, self.cov_dirname())
 
     def make_report(self, force=False):
-
+      
+        report = self.repo.last_test_report()
+        if report:
+            delta = datetime.now() - report.creation_date
+            if report.state == "running" and delta < MAX_RUN_DELTA:
+                print "Last report is still running, running time is %s" % str(delta)
+                return report
+    
         self.setup_env()
         commit = self.last_commit()
         new_test = None
 
         if force or self.repo.last_commit != commit or len(commit) == 0:
-            #self.repo.last_commit = commit
-
-            install_result, returncode1 = self.install()
-            # mysql text field has a limitation on how large a text field can be
-            # 65,535 bytes ~64kb
-
-            mysql_text_limit = 40000
-            install_result = install_result[-mysql_text_limit:]
-
-            test_result, returncode2 = self.run_tests()
-            test_result = test_result[-mysql_text_limit:]
 
             author = self.last_commit_author()
 
-            result_state = 'pass' if returncode2 == 0 else 'fail'
             new_test = TestReport(
                 repository=self.repo,
-                install=install_result,
-                result=test_result,
+                install="Running ...",
+                result="Running ...",
                 commit=commit,
                 author=author,
-                state=result_state,
+                state='running',
             )
+            new_test.save()
+            
+            try:
+                install_result, returncodeinstall = self.install()
+                # mysql text field has a limitation on how large a text field can be
+                # 65,535 bytes ~64kb
+                mysql_text_limit = 40000
+                install_result = install_result[-mysql_text_limit:]
+
+                test_result, returncode = self.run_tests()
+                test_result = test_result[-mysql_text_limit:]
+
+            except e:
+                returncode = 1
+                install_result = str(e)
+                test_result = str(e)
+
+            if returncode == 0:
+                result_state = "pass"
+            else:
+                result_state = "fail"
+            new_test.install=install_result
+            new_test.result=test_result    
+            new_test.state=result_state,
             new_test.save()
 
             # this to avoid to override things that could have been modified in
-            # the admin.
+            # the admin, we fetch the repo again.
             save_repo = Repository.objects.get(pk=self.repo.pk)
             save_repo.state = result_state
             save_repo.last_commit = commit

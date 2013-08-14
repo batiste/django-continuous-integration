@@ -10,6 +10,11 @@ import string
 import hashlib
 import os
 
+try:
+    from djintegration.tasks import MakeTestReportsTask
+except:
+    pass
+
 REPOS = (
     ('git', 'Git'),
     ('svn', 'Subversion'),
@@ -20,6 +25,7 @@ REPOS = (
 STATE = (
     ('fail', 'Fail'),
     ('pass', 'Pass'),
+    ('running', 'Running'),
 )
 
 VIRTUAL_ENV = (
@@ -63,7 +69,16 @@ class Repository(models.Model):
         help_text='Default: settings.DJANGO_INTEGRATION_MAILS, comma separated.')
 
     def fail(self):
-        return self.state == 'fail'
+        latest = self.last_test_report()
+        if not latest:
+            return False
+        return latest.state == 'fail'
+
+    def running(self):
+        latest = self.last_test_report()
+        if not latest:
+            return False
+        return latest.state == 'running'
 
     def last_test_report(self):
         return TestReport.objects.filter(repository=self).latest('creation_date')
@@ -114,21 +129,18 @@ class TestReport(models.Model):
 
     def fail(self):
         return self.state == 'fail'
+        
+    def running(self):
+        return self.state == 'running'
 
     class Meta:
         verbose_name = _('Test report')
         verbose_name_plural = _('Test reports')
 
     def __unicode__(self):
-        return "Test on %s for %s: %s" % (self.creation_date.strftime("%c"), self.repository.name, self.state)
+        return "Test on %s for %s: %s" % (self.creation_date.strftime("%c"), 
+          self.repository.name, self.state)
 
     def result_summary(self):
-        result_array = self.result.split("\n")
-        summary = "No clean result"
-        if len(result_array) > 4:
-            if result_array[-4].startswith("Ran"):
-                summary = "%s -- %s" % (result_array[-4], result_array[-2])
-            else:
-                summary += " %d" % len(result_array)
-        return summary
+        return "<br>".join(self.result.split("\n")[-6:])
 
