@@ -81,7 +81,10 @@ class Repository(models.Model):
         return latest.state == 'running'
 
     def last_test_report(self):
-        return TestReport.objects.filter(repository=self).latest('creation_date')
+        try:
+            return TestReport.objects.filter(repository=self).latest('creation_date')
+        except:
+            return None
 
     def get_install_command(self):
         return self.install_command or 'python setup.py install'

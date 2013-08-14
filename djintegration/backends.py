@@ -118,20 +118,22 @@ class RepoBackend(object):
     def run_tests(self):
         cmds = self.repo.get_test_command()
         cmds = cmds.replace('\r\n', ';;')
-        result = None
+        log = ""
         for cmd in cmds.split(';;'):
             if len(cmd):
-                result = self.command_app(cmd, use_test_subpath=True)
-        return result
+                out, ret = self.command_app(cmd, use_test_subpath=True)
+                log = log + out
+        return (log, ret)
 
     def install(self):
         cmds = self.repo.get_install_command()
         cmds = cmds.replace('\r\n', ';;')
-        result = None
+        log = ""
         for cmd in cmds.split(';;'):
             if len(cmd):
-                result = self.command_app(cmd)
-        return result
+                out, ret = self.command_app(cmd, use_test_subpath=True)
+                log = log + out
+        return (log, ret)
 
     def teardown_env(self):
         # search for coverage results directory
@@ -185,9 +187,10 @@ class RepoBackend(object):
                 install_result = install_result[-mysql_text_limit:]
 
                 test_result, returncode = self.run_tests()
+                print test_result
                 test_result = test_result[-mysql_text_limit:]
 
-            except e:
+            except Exception as e:
                 returncode = 1
                 install_result = str(e)
                 test_result = str(e)
@@ -198,7 +201,7 @@ class RepoBackend(object):
                 result_state = "fail"
             new_test.install=install_result
             new_test.result=test_result    
-            new_test.state=result_state,
+            new_test.state=result_state
             new_test.save()
 
             # this to avoid to override things that could have been modified in
